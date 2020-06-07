@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'androidx.navigation.safeargs'
+apply plugin: 'jacoco' // Jacoco plugin
 
 android {
     compileSdkVersion 29
@@ -18,11 +19,87 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            testCoverageEnabled true
+        }
+    }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
+}
+
+//---------------------- Jacoco
+
+// jacoco configurations
+ext{
+    coverageSourceDirs = 'app/src/test/java'
+}
+
+jacoco{
+    toolVersion "0.8.5"
+    reportsDir = file("$buildDir/reports")
+}
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']){
+    group = "Reporting"
+    description = "Generate Jacoco reports for Debug and Build"
+
+    // define type of reports to generate
+    reports{
+        xml.enabled = true
+        html.enabled = true
+        csv.enabled = true
     }
 
+    def excludeFiles = [
+            '**/R.class',
+            '**/R$*.class',
+            '**/*$ViewBinder*.*',
+            '**/*$InjectAdapter*.*',
+            '**/*Injector*.*',
+            '**/BuildConfig.*',
+            '**/Manifest*.*'
+            // '**/*Test*.*',
+            // 'android/**/*.*',
+            // 'com/**/*.*',
+            // 'androidTest/**/*.*',
+            // '**/data/model/*'
+    ]
+
+    if (project.hasProperty("teamcity")) {
+        println '##teamcity[jacocoReport ' +
+                'dataPath=\'app/build/jacoco/testDebugUnitTest.exec\' ' +
+                'includes=\'com.rulan.project_distcovid.*\' ' +
+                'excludes=\'**/R.class **/R$*.class ' +
+                '**/*$ViewInjector*.* **/BuildConfig.* **/Manifest*.*\']'
+    }
+
+    def debugTree = fileTree(
+            dir:"${buildDir}/intermediates/classes/debug",
+            excludes: excludeFiles
+    )
+
+    def mainSrc = "${project.projectDir}/app/src/main/java"
+
+    sourceDirectories.from = files([mainSrc])
+    classDirectories.from = files([debugTree])
+    executionData.from = fileTree(dir: project.buildDir, includes: [
+            'app/build/jacoco/testDebugUnitTest.exec'
+    ])
+
+    doFirst {
+        new File("$buildDir/intermediates/classes/").eachFileRecurse { file ->
+            if (file.name.contains('$$')) {
+                file.renameTo(file.path.replace('$$', '$'))
+            }
+        }
+    }
 }
+
+//--------------- Sonarqube
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -33,8 +110,8 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.navigation:navigation-fragment:2.2.2'
     implementation 'androidx.navigation:navigation-ui:2.2.2'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
-    testImplementation 'junit:junit:4.12'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
