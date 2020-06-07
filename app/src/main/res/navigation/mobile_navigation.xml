@@ -32,12 +32,7 @@
     <fragment
             android:id="@+id/nav_gallery"
             android:name="cm.rulan.distcovid.ui.gallery.GalleryFragment"
-            android:label="@string/menu_gallery"
+            android:label="@string/menu_statistic"
             tools:layout="@layout/fragment_gallery"/>
 
-    <fragment
-            android:id="@+id/nav_slideshow"
-            android:name="cm.rulan.distcovid.ui.slideshow.SlideshowFragment"
-            android:label="@string/menu_slideshow"
-            tools:layout="@layout/fragment_slideshow"/>
 </navigation>
