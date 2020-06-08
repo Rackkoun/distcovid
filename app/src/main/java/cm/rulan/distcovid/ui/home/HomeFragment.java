@@ -45,28 +45,7 @@ public class HomeFragment extends Fragment {
     private TextView tview;
     private Context context;
 
-    // Create a BroadcastReceiver for ACTION_FOUND.
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
-                bluethoothadapter.startDiscovery();
-            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                bluethoothadapter.cancelDiscovery();
-            } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                // Discovery has found a device. Get the BluetoothDevice
-                // object and its info from the Intent.
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                String deviceName = device.getName();
-                Toast.makeText(context.getApplicationContext(), "Found device " + deviceName, Toast.LENGTH_SHORT).show();
-                String deviceHardwareAddress = device.getAddress(); // MAC address
-                Log.d("Device Name: " , "device " + deviceName);
-                list.add(deviceName + "\t" + "\t" + deviceHardwareAddress);
 
-            }
-        }
-    };
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -86,6 +65,7 @@ public class HomeFragment extends Fragment {
         bluethoothadapter = BluetoothAdapter.getDefaultAdapter();
         btnpairedDev = root.findViewById(R.id.list);
         scan = root.findViewById(R.id.scan);
+        listDevices();
 
         if (bluethoothadapter == null) {
             // Device doesn't support Bluetooth
@@ -110,6 +90,32 @@ public class HomeFragment extends Fragment {
         return root;
     }
 
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        bluethoothadapter.cancelDiscovery();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_ENABLE_BT)
+        {
+            if (resultCode == 0)
+            {
+                // If the resultCode is 0, the user selected "No" when prompt to
+                // allow the app to enable bluetooth.
+                // You may want to display a dialog explaining what would happen if
+                // the user doesn't enable bluetooth.
+                Toast.makeText(this.getContext(), "The user decided to deny bluetooth access", Toast.LENGTH_LONG).show();
+            }
+            else
+                Log.i(TAG, "User allowed bluetooth access!");
+        }
+    }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -157,19 +163,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void ScanBluetooth(){
-        if (bluethoothadapter.isDiscovering()) {
-            bluethoothadapter.cancelDiscovery();
-            Log.d(TAG, "Cancelling discover");
-            // Für Broadcasts registrieren, wenn ein Gerät entdeckt wird.
-            filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            //registerReceiver(receiver, filter);
-        }
-        else{
-            bluethoothadapter.startDiscovery();
-            Toast.makeText(this.getContext(), "Start Scanning.........", Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "Looking for unpaired devices");
-            filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            //context.registerReceiver(receiver, filter);
-        }
+        Intent intent = new Intent(this.getContext(), FoundBTDevices.class);
+        startActivity(intent);
     }
 }
