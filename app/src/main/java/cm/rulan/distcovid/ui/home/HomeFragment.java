@@ -34,8 +34,7 @@ public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
     private static final String TAG = "Home";
-    private static final int REQUEST_ENABLE_BT = 0;
-    private static final int REQUEST_DISCOVER_BT = 1;
+    private static final int REQUEST_ENABLE_BT = 1;
     private BluetoothAdapter bluethoothadapter;
     private Button btnpairedDev, scan;
     private ListView pairedDev, newDeviceList;
@@ -44,7 +43,7 @@ public class HomeFragment extends Fragment {
     private ArrayAdapter adapter;
     private TextView tview;
     private Context context;
-
+    Set<BluetoothDevice> pairedDevices;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -62,15 +61,14 @@ public class HomeFragment extends Fragment {
         pairedDev = root.findViewById(R.id.listView);
         list = new ArrayList<>();
         tview = root.findViewById(R.id.textView);
-        bluethoothadapter = BluetoothAdapter.getDefaultAdapter();
         btnpairedDev = root.findViewById(R.id.list);
         scan = root.findViewById(R.id.scan);
-        listDevices();
-
+        //listDevices();
+        bluethoothadapter = BluetoothAdapter.getDefaultAdapter();
         if (bluethoothadapter == null) {
             // Device doesn't support Bluetooth
-            new AlertDialog.Builder(this.context)
-                    .setTitle("Nicht Kompatibel")
+            AlertDialog.Builder  dialbuild =new AlertDialog.Builder(getContext());
+                     dialbuild.setTitle("Nicht Kompatibel")
                     .setMessage("Your phone does not support Bluetooth")
                     .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
@@ -80,13 +78,14 @@ public class HomeFragment extends Fragment {
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         }
-        if (!bluethoothadapter.isEnabled()) {
+
+         /*if (!bluethoothadapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
         else{
             Toast.makeText(this.getContext(), "Bluetooth is already On", Toast.LENGTH_SHORT).show();
-        }
+        }*/
         return root;
     }
 
@@ -123,7 +122,7 @@ public class HomeFragment extends Fragment {
         btnpairedDev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listDevices();
+//                listDevices();
             }
         });
         scan.setOnClickListener(new View.OnClickListener(){
@@ -144,8 +143,8 @@ public class HomeFragment extends Fragment {
 //        });*/
     }
 
-    public void listDevices() {
-        Set<BluetoothDevice> pairedDevices = bluethoothadapter.getBondedDevices();
+    /*public void listDevices() {
+//       pairedDevices = bluethoothadapter.getBondedDevices();
         if (pairedDevices.size() > 0) {
             // Es gibt gekoppelte Geräte. Gib den name und adresse
             // von jedem gekoppelten Gerät.
@@ -160,7 +159,7 @@ public class HomeFragment extends Fragment {
 
             }
         }
-    }
+    }*/
 
     private void ScanBluetooth(){
         Intent intent = new Intent(this.getContext(), FoundBTDevices.class);

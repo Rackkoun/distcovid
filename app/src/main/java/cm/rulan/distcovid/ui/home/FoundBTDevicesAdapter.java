@@ -19,7 +19,6 @@ public class FoundBTDevicesAdapter extends ArrayAdapter<BluetoothObject> {
     public FoundBTDevicesAdapter(Context context, ArrayList<BluetoothObject> arrayOfAlreadyPairedDevices)
     {
         super(context, R.layout.row_bt_scan_new_devices, arrayOfAlreadyPairedDevices);
-
         this.context = context;
         this.arrayFoundDevices = arrayOfAlreadyPairedDevices;
     }
@@ -31,7 +30,6 @@ public class FoundBTDevicesAdapter extends ArrayAdapter<BluetoothObject> {
 
         // 1. Create Inflater
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
         // 2. Get rowView from inflater
         View rowView = inflater.inflate(R.layout.row_bt_scan_new_devices, parent, false);
 

@@ -11,8 +11,6 @@ import android.os.Bundle;
 
 import java.util.ArrayList;
 
-import cm.rulan.distcovid.R;
-
 public class FoundBTDevices extends ListActivity {
 
     private BluetoothAdapter mBluetoothAdapter;
@@ -24,16 +22,15 @@ public class FoundBTDevices extends ListActivity {
         super.onCreate(savedInstanceState);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        arrayOfFoundBTDevices = new ArrayList<BluetoothObject>();
+
         displayListOfFoundDevices();
     }
 
     private void displayListOfFoundDevices()
     {
-        arrayOfFoundBTDevices = new ArrayList<BluetoothObject>();
-
         // start looking for bluetooth devices
         mBluetoothAdapter.startDiscovery();
-
         // Discover new devices
         // Create a BroadcastReceiver for ACTION_FOUND
         final BroadcastReceiver mReceiver = new BroadcastReceiver()
@@ -62,7 +59,6 @@ public class FoundBTDevices extends ListActivity {
                     arrayOfFoundBTDevices.add(bluetoothObject);
                     // 1. Pass context and data to the custom adapter
                     FoundBTDevicesAdapter adapter = new FoundBTDevicesAdapter(getApplicationContext(), arrayOfFoundBTDevices);
-
                     // 2. setListAdapter
                     setListAdapter(adapter);
                 }
