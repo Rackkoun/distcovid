@@ -9,20 +9,19 @@
         android:id="@+id/scan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Scan"
+        android:text="Scan for BT Devices"
         android:onClick="ScanBluetooth"
         android:visibility="visible"
         tools:layout_editor_absoluteX="3dp"
         tools:layout_editor_absoluteY="-1dp"
         android:layout_alignParentRight="true"
-        tools:ignore="MissingConstraints"
-        android:background="#fff"/>
+        tools:ignore="MissingConstraints" />
     <Button
         android:id="@+id/list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="listDevices"
-        android:text="List Devices"
+        android:text="List Paired Devices"
         android:visibility="visible"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="16dp"
@@ -36,40 +35,37 @@
         android:layout_below="@+id/textView"
         tools:ignore="MissingConstraints" />
 
-
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Paired devices:"
-        android:textColor="#ff34ff06"
+        android:textColor="#303F9F"
         android:textSize="25dp"
+        android:visibility="gone"
         android:layout_below="@+id/list"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="83dp" />
 
-    <!--<TextView
-            android:id="@+id/text_home"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:textAlignment="center"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>-->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvDeviceName"
+        android:textSize="15sp"/>
 
-    <!--<Button
-            android:id="@+id/button_home"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/next"
-            app:layout_constraintTop_toBottomOf="@id/text_home"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>-->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvDeviceAddress"
+        android:textSize="15sp"/>
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView1"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/listView"
+        tools:ignore="MissingConstraints" />
+
 </RelativeLayout>
