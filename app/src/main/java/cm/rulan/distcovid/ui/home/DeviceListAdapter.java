@@ -8,19 +8,17 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-
 import java.util.ArrayList;
 
 import cm.rulan.distcovid.R;
 
-public class DeviceListAdapter extends ArrayAdapter<BluetoothDevice> {
+public class DeviceListAdapter extends ArrayAdapter {
 
     private LayoutInflater mLayoutInflater;
-    private ArrayList<BluetoothDevice> mDevices;
+    private ArrayList mDevices;
     private int  mViewResourceId;
 
-    public DeviceListAdapter(Context context, int resource, ArrayList<BluetoothDevice> arli) {
+    public DeviceListAdapter(Context context, int resource, ArrayList arli) {
         super(context, resource, arli);
         this.mDevices = arli;
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -30,7 +28,7 @@ public class DeviceListAdapter extends ArrayAdapter<BluetoothDevice> {
     public View getView(int position, View convertView, ViewGroup parent) {
         convertView = mLayoutInflater.inflate(mViewResourceId, null);
 
-        BluetoothDevice device = mDevices.get(position);
+        BluetoothDevice device = (BluetoothDevice) mDevices.get(position);
 
         if (device != null) {
             TextView deviceName = (TextView) convertView.findViewById(R.id.tvDeviceName);
