@@ -6,11 +6,11 @@
     android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/scan"
+        android:id="@+id/scanBT"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Scan for BT Devices"
-        android:onClick="ScanBluetooth"
+        android:onClick="ScanBluetoothDevices"
         android:visibility="visible"
         tools:layout_editor_absoluteX="3dp"
         tools:layout_editor_absoluteY="-1dp"
@@ -48,24 +48,6 @@
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="83dp" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvDeviceName"
-        android:textSize="15sp"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvDeviceAddress"
-        android:textSize="15sp"/>
-
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/listView1"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@+id/listView"
-        tools:ignore="MissingConstraints" />
 
 </RelativeLayout>

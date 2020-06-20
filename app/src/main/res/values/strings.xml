@@ -18,4 +18,12 @@
     <string name="hello_gallery_second">Hello HomeSecondFragment. Arg: %1$s</string>
     <string name="hello_slideshow_second">Hello HomeSecondFragment. Arg: %1$s</string>
     <string name="scanning">Scan</string>
+    <string name="ble_not_supported">Nicht unterstützt</string>
+    <string name="searchForNewBluetoothDevices_msg">suche nach new btdevices</string>
+    <string name="searchForNewBluetoothDevices_titel">search for new btdevices</string>
+    <string name="bluetooth_off">bluetoohoff</string>
+    <string name="bluetooth_on">bluetoothon</string>
+    <string name="bluetooth_turning_on">blturningon</string>
+    <string name="bluetooth_turning_off">bluetoothturningoff</string>
+    <string name="adaptername">AdapterName</string>
 </resources>
