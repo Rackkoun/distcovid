@@ -26,16 +26,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <receiver android:name=".ui.home.HomeFragment"
-            android:label="@string/app_name"
-            tools:ignore="Instantiatable">
-            <intent-filter>
-                <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
-                <action android:name="android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED" />
-                <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
-                <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
-            </intent-filter>
-        </receiver>
+
     </application>
 
 </manifest>

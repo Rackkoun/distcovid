@@ -23,4 +23,10 @@
             app:headerLayout="@layout/nav_header_main"
             app:menu="@menu/drawer_menu"/>
 
+    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:cacheColorHint="#00000000"
+        android:id="@android:id/list">
+    </ListView>
 </androidx.drawerlayout.widget.DrawerLayout>

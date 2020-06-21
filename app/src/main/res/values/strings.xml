@@ -26,4 +26,8 @@
     <string name="bluetooth_turning_on">blturningon</string>
     <string name="bluetooth_turning_off">bluetoothturningoff</string>
     <string name="adaptername">AdapterName</string>
+    <string name="unknown_device">unknow device</string>
+    <string name="menu_stop">menu_stop</string>
+    <string name="menu_scan">Menu_Scan</string>
+    <string name="title_devices">title-device</string>
 </resources>

@@ -12,5 +12,10 @@
                 android:id="@+id/nav_gallery"
                 android:icon="@drawable/ic_menu_gallery"
                 android:title="@string/menu_statistic"/>
+
+        <item android:id="@+id/menu_refresh"
+              android:icon="@drawable/abc_vector_test"
+            android:title="Refresh" />
+
     </group>
 </menu>

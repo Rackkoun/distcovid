@@ -1,3 +1,4 @@
+/*
 package cm.rulan.distcovid;
 
 import android.app.ProgressDialog;
@@ -8,7 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
-import cm.rulan.distcovid.ui.home.HomeFragment;
+import cm.rulan.distcovid.ui.home.Dev;
 
 public class BluetoothBroadcastReceiver extends BroadcastReceiver {
     private ProgressDialog progressDialog;
@@ -68,3 +69,4 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
         }
     }
 }
+*/
