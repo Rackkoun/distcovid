@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-<<<<<<< HEAD
  import android.bluetooth.BluetoothManager;
  import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,10 +11,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-=======
-import android.content.*;
 import android.os.Build;
->>>>>>> origin/dev01
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,28 +27,24 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
-<<<<<<< HEAD
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
  import androidx.recyclerview.widget.RecyclerView;
 
  import java.util.ArrayList;
-=======
 import cm.rulan.distcovid.R;
 
 import java.util.Objects;
->>>>>>> origin/dev01
 import java.util.Set;
 
 public class HomeFragment extends Fragment {
 
-    private static final String TAG = "Home";
+   /* private static final String TAG = "Home";
     private static final int REQUEST_ENABLE_BT = 1;
     //private static final int REQUEST_DISCOVERABLE_BT = 0;
     Set<BluetoothDevice> pairedDevices;
     //private HomeViewModel homeViewModel;
     private BluetoothAdapter bluethoothadapter;
-<<<<<<< HEAD
     private Button btnpairedDev, btnscan;
     private ListView pairedDev;
     private ArrayList list;
@@ -66,7 +59,6 @@ public class HomeFragment extends Fragment {
     private static final long SCAN_PERIOD = 10000;
     private LeDeviceListAdapter mLeDeviceListAdapter;
 
-=======
     private Button listBtn, scanBtn;
     private ListView foundDevicesListView;
     //private List<String> deviceList;
@@ -95,16 +87,14 @@ public class HomeFragment extends Fragment {
             }
         }
     };
-
+*/
     // Stops scanning after 10 seconds.
     //private static final long SCAN_PERIOD = 10000;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
->>>>>>> origin/dev01
 
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
+        /*View root = inflater.inflate(R.layout.fragment_home, container, false);
 
-<<<<<<< HEAD
         mHandler = new Handler();
         pairedDev = root.findViewById(R.id.listView);
         list = new ArrayList<>();
@@ -147,12 +137,12 @@ public class HomeFragment extends Fragment {
                         break;
                 }
             }
-        };*/
+        };
 
         //bluethoothadapter = BluetoothAdapter.getDefaultAdapter();
         if (bluethoothadapter == null) {
             // Device doesn't support Bluetooth
-=======
+
         // 0-) init views
         initViews(root);
 
@@ -171,9 +161,9 @@ public class HomeFragment extends Fragment {
         //1-) set default manager
         bluethoothadapter = BluetoothAdapter.getDefaultAdapter();
         pairedDevices = bluethoothadapter.getBondedDevices();
-    }
+    }*/
 
-    // check permissions
+    /*check permissions
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void checkBTPermissions() {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
@@ -194,9 +184,8 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //2-) check if device is not supported
+        /*2-) check if device is not supported
         if(bluethoothadapter == null){
->>>>>>> origin/dev01
             AlertDialog.Builder dialbuild = new AlertDialog.Builder(getContext());
             dialbuild.setTitle("Nicht Kompatibel")
                     .setMessage("Your phone does not support Bluetooth")
@@ -219,8 +208,8 @@ public class HomeFragment extends Fragment {
         }else{
             Toast.makeText(getContext(), "Bluetooth is already on on", Toast.LENGTH_LONG).show();
         }
-    }
-
+    }*/
+    /*
     public void onScanningBluetoothDevices(){
 
         if(pairedDevices.size() > 0){
@@ -243,84 +232,6 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        //unregister receiver
-       try {
-           Objects.requireNonNull(getContext()).unregisterReceiver(mReceiver);
-       }catch (NullPointerException e){
-           Log.d("HOME FRAGEMENT: ", "onDestroy-Func");
-           e.printStackTrace();
-       }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-<<<<<<< HEAD
-        scanLeDevice(false);
-        mLeDeviceListAdapter.clear();
-=======
-        if (bluethoothadapter != null) {
-            if (bluethoothadapter.isDiscovering()) {
-                bluethoothadapter.cancelDiscovery();
-            }
-        }
->>>>>>> origin/dev01
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-<<<<<<< HEAD
-        // Ensures Bluetooth is enabled on the device.  If Bluetooth is not currently enabled,
-        // fire an intent to display a dialog asking the user to grant permission to enable it.
-        if (!bluethoothadapter.isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        }
-        // Initializes list view adapter.
-        mLeDeviceListAdapter = new LeDeviceListAdapter();
-        pairedDev.setAdapter(mLeDeviceListAdapter);
-        scanLeDevice(true);
-    }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        if (requestCode == REQUEST_ENABLE_BT)
-        {
-            if (resultCode == 0)
-            {
-=======
-        bluethoothadapter.startDiscovery();
-    }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_ENABLE_BT) {
-            if (bluethoothadapter != null && bluethoothadapter.isEnabled()) {
->>>>>>> origin/dev01
-                // If the resultCode is 0, the user selected "No" when prompt to
-                // allow the app to enable bluetooth.
-                // You may want to display a dialog explaining what would happen if
-                // the user doesn't enable bluetooth.
-                bluethoothadapter.startDiscovery();
-                Toast.makeText(getContext(), "The user decided to deny bluetooth access", Toast.LENGTH_LONG).show();
-<<<<<<< HEAD
-                getActivity().finish();
-            }
-            else
-=======
-            } else
->>>>>>> origin/dev01
-                Log.i(TAG, "User allowed bluetooth access!");
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-
-<<<<<<< HEAD
-    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -343,8 +254,8 @@ public class HomeFragment extends Fragment {
                 //scanLeDevice(true);
             }
         });
-    }
-
+    }*/
+    /*
     public void listPairedDevices() {
         pairedDevices = bluethoothadapter.getBondedDevices();
         if (pairedDevices.size() > 0) {
@@ -363,7 +274,7 @@ public class HomeFragment extends Fragment {
             }
         }
     }
-    /*
+
     private void ScanBluetoothDevices() {
         // If we're already discovering, stop it
         if (bluethoothadapter.isDiscovering()) {
@@ -380,7 +291,7 @@ public class HomeFragment extends Fragment {
             this.getActivity().registerReceiver(mReceiver, filter);
             bluethoothadapter.startDiscovery();
         }
-    }*/
+    }
 
     private void scanLeDevice(final boolean enable) {
         if (enable) {
@@ -489,10 +400,6 @@ public class HomeFragment extends Fragment {
         TextView deviceName;
         TextView deviceAddress;
     }
-    }
-=======
-}
->>>>>>> origin/dev01
-
-
-
+    }*/
+        return null;
+    }}
