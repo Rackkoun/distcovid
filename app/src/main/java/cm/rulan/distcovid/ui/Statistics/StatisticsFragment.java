@@ -1,4 +1,4 @@
-package cm.rulan.distcovid.ui.startistics;
+package cm.rulan.distcovid.ui.Statistics;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

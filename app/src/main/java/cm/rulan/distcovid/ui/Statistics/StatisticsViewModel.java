@@ -1,4 +1,4 @@
-package cm.rulan.distcovid.ui.startistics;
+package cm.rulan.distcovid.ui.Statistics;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
