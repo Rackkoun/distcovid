@@ -25,7 +25,7 @@
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
        android:layout_marginBottom="200dp"
-       android:onClick="onScanningBluetoothDevices"
+       android:onClick="listPairedDevices"
        android:text="List of Paired Devices"
        android:background="@mipmap/ic_launcher"
        android:layout_alignParentTop="true"
@@ -36,7 +36,7 @@
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
        android:layout_marginBottom="200dp"
-       android:clickable="false"
+       android:onClick="Scandevices"
        android:text="Scan Devices"
        android:layout_alignParentBottom="true"
        android:visibility="visible"
@@ -48,6 +48,12 @@
        android:layout_below="@+id/textView"
        tools:ignore="MissingConstraints,NotSibling" />
 
+   <ListView
+       android:id="@+id/listViewDetected"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content">
+
+   </ListView>
    <TextView
        android:id="@+id/textView"
        android:layout_width="wrap_content"
