@@ -33,20 +33,20 @@ android {
 //---------------------- Jacoco
 
 // jacoco configurations
-ext{
+ext {
     coverageSourceDirs = 'app/src/test/java'
 }
 
-jacoco{
+jacoco {
     toolVersion "0.8.5"
     reportsDir = file("$buildDir/reports")
 }
-task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']){
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
     group = "Reporting"
     description = "Generate Jacoco reports for Debug and Build"
 
     // define type of reports to generate
-    reports{
+    reports {
         xml.enabled = true
         html.enabled = true
         csv.enabled = true
@@ -76,7 +76,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']){
     }
 
     def debugTree = fileTree(
-            dir:"${buildDir}/intermediates/classes/debug",
+            dir: "${buildDir}/intermediates/classes/debug",
             excludes: excludeFiles
     )
 
