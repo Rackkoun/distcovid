@@ -8,12 +8,52 @@
         tools:context=".MainActivity">
 
     <TextView
+            android:id="@+id/toptitle_tv_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello World!"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="Name of founded devices"
+            android:textStyle="bold"
+            android:textSize="20dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
+    <!-- Place a layout here -->
+    <LinearLayout
+            android:id="@+id/detection_view_layout_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            app:layout_constraintTop_toBottomOf="@id/toptitle_tv_id"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:orientation="vertical">
+
+        <ListView
+                android:id="@+id/device_list_id"
+                android:layout_width="match_parent"
+                android:layout_height="300dp">
+
+        </ListView>
+    </LinearLayout>
+
+    <TextView
+            android:id="@+id/number_of_devices_found_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/detection_view_layout_id"
+    app:layout_constraintRight_toRightOf="parent"
+    android:layout_marginRight="35dp"
+    android:layout_marginTop="20dp"/>
+
+    <Button android:id="@+id/scan_devices_btn_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+    app:layout_constraintTop_toBottomOf="@id/number_of_devices_found_id"
+    app:layout_constraintLeft_toLeftOf="parent"
+    android:layout_marginLeft="15dp"
+    android:layout_marginTop="20dp"
+    android:text="@string/launch_scan"
+    android:background="@color/colorPrimaryDark"
+    android:textColor="@color/text_white"
+    />
 </androidx.constraintlayout.widget.ConstraintLayout>

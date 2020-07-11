@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">distcovid</string>
+    <string name="launch_scan">LAUNCH SCAN</string>
 </resources>
