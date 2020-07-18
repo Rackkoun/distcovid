@@ -26,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView numberOfDectectedDevices;
     private ListView deviceListView;
 
-    private List<String> deviceNameList;
     private List<BluetoothDevice> bluetoothDeviceList;
     private ArrayAdapter<String> arrayAdapter;
 
@@ -45,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
         numberOfDectectedDevices = findViewById(R.id.number_of_devices_found_id);
         deviceListView = findViewById(R.id.device_list_id);
 
-        deviceNameList = new ArrayList<String>();
         bluetoothDeviceList = new ArrayList<>();
         arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 
@@ -74,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if(bluetoothDeviceList.size() < 1){
                     Log.i(TAG, "SIZE OF LIST: " + bluetoothDeviceList.size());
-                    arrayAdapter.add(device.getName());
+                    arrayAdapter.add(device.getAddress());
 
                     Log.i(TAG, "Device: Name: ["+device.getName()+" - - "+device.getAddress()+"]");
                     bluetoothDeviceList.add(device);
@@ -89,12 +87,9 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                     if(!deviceIsInTheList){
-                        arrayAdapter.add(device.getName());
+                        arrayAdapter.add(device.getAddress());
 
                         bluetoothDeviceList.add(device);
-                        for (BluetoothDevice bluetoothDevice : bluetoothDeviceList) {
-                            deviceNameList.add(bluetoothDevice.getName());
-                        }
                         arrayAdapter.notifyDataSetChanged();
                         numberOfDectectedDevices.setText("Number of devices found: [" + arrayAdapter.getCount()+"]");
                     }
@@ -108,31 +103,29 @@ public class MainActivity extends AppCompatActivity {
 
         // enable BT
         if(!bluetoothAdapter.isEnabled()){
-            bluetoothAdapter.enable();
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             Log.i(TAG, "BT is enabled");
         }
 
         // Make BT discoverable
-        if(bluetoothAdapter.isDiscovering()){
+        else if(bluetoothAdapter.isDiscovering()){
             bluetoothAdapter.cancelDiscovery();
             Log.i(TAG, "discovering is canceled...");
         }
-        Log.i(TAG, "BT is discovering...");
-        //make Bluetooth discoverable
-        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 500);
+        else {
+            Log.i(TAG, "-- Entry else: adapter cleared");
+            bluetoothAdapter.startDiscovery();
 
-        for(String b: deviceNameList)
-            Log.i(TAG, "LIST: str"+ b);
+            IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            MainActivity.this.registerReceiver(broadcastReceiver, intentFilter);
+            Log.i(TAG, "BT is discovering...");
 
-        deviceListView.setAdapter(arrayAdapter);
-        numberOfDectectedDevices.setText("Number of devices found: [" + arrayAdapter.getCount()+"]");
-        arrayAdapter.notifyDataSetChanged();
-
-        IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        MainActivity.this.registerReceiver(broadcastReceiver, intentFilter);
-        bluetoothAdapter.startDiscovery();
-        startActivity(discoverableIntent);
+            deviceListView.setAdapter(arrayAdapter);
+            numberOfDectectedDevices.setText("Number of devices found: [" + arrayAdapter.getCount() + "]");
+            arrayAdapter.notifyDataSetChanged();
+            Log.i(TAG, "End of else--");
+        }
     }
     @Override
     protected void onDestroy() {
