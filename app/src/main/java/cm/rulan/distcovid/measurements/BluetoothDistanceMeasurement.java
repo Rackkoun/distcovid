@@ -19,7 +19,7 @@ public class BluetoothDistanceMeasurement {
     * formal: Distance = 10^((txPower - rssi)/(10*Ni))
     * with i = 2, 3, 4*/
 
-    private static final int[] N = new int[]{2, 3, 4};
+    private static final int[] N = new int[]{2, 3, 4, 10, 15, 20, 25, 30, 50};
     private static final String TAG = "BTDistance";
 
     public static double convertRSSI2MeterWithAccuracy(short rssi){

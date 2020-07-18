@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import cm.rulan.distcovid.measurements.BluetoothDistanceMeasurement;
@@ -23,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_ENABLE_BT = 1;
 
-    private Button launchScanBtn;
+    private Switch bluetoothSwitch, scanSwitch;
     private TextView numberOfDectectedDevices;
     private ListView deviceListView;
 
@@ -41,9 +40,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViews(){
-        launchScanBtn = findViewById(R.id.scan_devices_btn_id);
-        numberOfDectectedDevices = findViewById(R.id.number_of_devices_found_id);
+        numberOfDectectedDevices = findViewById(R.id.number_of_devices_found_int_id);
         deviceListView = findViewById(R.id.device_list_id);
+
+        bluetoothSwitch = findViewById(R.id.bluetooth_on_off_id);
+        scanSwitch = findViewById(R.id.scan_start_stop_id);
 
         bluetoothDeviceList = new ArrayList<>();
         arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
@@ -51,15 +52,42 @@ public class MainActivity extends AppCompatActivity {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
+    private void bluetoothOnOff(){
+        bluetoothSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    // enable BT
+                    if(!bluetoothAdapter.isEnabled()){
+                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                        bluetoothSwitch.setText(R.string.bluetooth_default1);
+                        //isChecked = true;
+                        bluetoothSwitch.setChecked(true);
+                        Log.i(TAG, "BT is enabled");
+                    }
+                    Log.i(TAG, "BT on: ["+isChecked+"]");
+                }else{
+                    Log.i(TAG, "Disable BT");
+                    bluetoothAdapter.disable();
+                    bluetoothSwitch.setText(R.string.bluetooth_default);
+                    bluetoothSwitch.setChecked(false);
+                    Log.i(TAG, "BT off: ["+isChecked+"]");
+                }
+                Log.i(TAG, "Text: ["+bluetoothSwitch.getText().toString()+"]");
+                Log.i(TAG, "Text: ["+bluetoothSwitch.getTextOn().toString()+"]");
+                Log.i(TAG, "Text: ["+bluetoothSwitch.getTextOff().toString()+"]");
+                Log.i(TAG, "Text: ["+bluetoothSwitch.isChecked()+"]");
+                Log.i(TAG, "Text: ["+bluetoothSwitch.isActivated()+"]");
+            }
+        });
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
-        launchScanBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                launchScan();
-            }
-        });
+        bluetoothOnOff();
+        launchScan();
     }
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -71,8 +99,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "ACTION: ["+action+"]");
 
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                Log.i(TAG, "SIZE OF LIST: " + bluetoothDeviceList.size());
                 if(bluetoothDeviceList.size() < 1){
-                    Log.i(TAG, "SIZE OF LIST: " + bluetoothDeviceList.size());
                     short rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
                     double distance = BluetoothDistanceMeasurement.convertRSSI2MeterWithAccuracy(rssi);
                     double distance2 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 0);
@@ -92,9 +120,8 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(TAG, "Device: Name: ["+device.getName()+" - - "+device.getAddress()+"]");
                     bluetoothDeviceList.add(device);
                     arrayAdapter.notifyDataSetChanged();
-                    numberOfDectectedDevices.setText("Number of devices found: [" + String.valueOf(arrayAdapter.getCount())+"]");
+                    numberOfDectectedDevices.setText(String.valueOf(arrayAdapter.getCount()));
                 }else{
-                    Log.i(TAG, "SIZE OF LIST: " + bluetoothDeviceList.size());
                     boolean deviceIsInTheList = false;
                     for (BluetoothDevice bluetoothDevice : bluetoothDeviceList) {
                         if (device.getAddress().equals(bluetoothDevice.getAddress())) {
@@ -120,16 +147,16 @@ public class MainActivity extends AppCompatActivity {
 
                         bluetoothDeviceList.add(device);
                         arrayAdapter.notifyDataSetChanged();
-                        numberOfDectectedDevices.setText("Number of devices found: [" + arrayAdapter.getCount()+"]");
+                        numberOfDectectedDevices.setText(String.valueOf(arrayAdapter.getCount()));
                     }
                 }// Restart discovering after it is finished
-            }else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
+            }else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action) && scanSwitch.isActivated()){
                 Log.i(TAG, "--- -- Get count -- "+ arrayAdapter.getCount());
                 Log.i(TAG, "ACTION: ["+action+"]");
                 Log.i(TAG, "ACTION: ["+bluetoothAdapter.isDiscovering()+"]");
                 Log.i(TAG, "ACTION: ["+bluetoothAdapter.isEnabled()+"]");
                 Log.i(TAG, "----- End ----: ");
-                if (!bluetoothAdapter.isDiscovering() && bluetoothAdapter.isEnabled()){
+                if (!bluetoothAdapter.isDiscovering()){// && bluetoothAdapter.isEnabled()){
                     Log.i(TAG, "-- try to relaunch discovering");
                     arrayAdapter.clear();
                     bluetoothDeviceList.clear();
@@ -148,40 +175,52 @@ public class MainActivity extends AppCompatActivity {
     private void launchScan(){
         Log.i(TAG, "Scanning...");
 
-        // enable BT
-        if(!bluetoothAdapter.isEnabled()){
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            Log.i(TAG, "BT is enabled");
-        }
+        scanSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    if(!bluetoothAdapter.isEnabled()) {
+                        Toast.makeText(MainActivity.this, "Bluetooth is not enabled", Toast.LENGTH_SHORT).show();
+                        Log.i(TAG, "BT is not enabled");// Make BT discoverable
+                        scanSwitch.setText(R.string.scan_devices_default);
+                        scanSwitch.setChecked(false);
+                    }else {
+                        scanSwitch.setText(R.string.scan_devices_default1);
+                        if (bluetoothAdapter.isDiscovering()) {
+                            arrayAdapter.clear();
+                            bluetoothDeviceList.clear();
+                            arrayAdapter.notifyDataSetChanged();
+                            Log.i(TAG, "discovering is canceled...");
+                        } else {
+                            Log.i(TAG, "-- Entry else: adapter cleared");
+                            bluetoothAdapter.startDiscovery();
+                            arrayAdapter.clear();
+                            bluetoothDeviceList.clear();
+                            arrayAdapter.notifyDataSetChanged();
+                            IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+                            MainActivity.this.registerReceiver(broadcastReceiver, intentFilter);
 
-        // Make BT discoverable
-        if(bluetoothAdapter.isDiscovering()){
-            arrayAdapter.clear();
-            bluetoothDeviceList.clear();
-            arrayAdapter.notifyDataSetChanged();
-            Log.i(TAG, "discovering is canceled...");
-        }
-        else {
-            Log.i(TAG, "-- Entry else: adapter cleared");
-            bluetoothAdapter.startDiscovery();
-            arrayAdapter.clear();
-            bluetoothDeviceList.clear();
-            arrayAdapter.notifyDataSetChanged();
-            IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            MainActivity.this.registerReceiver(broadcastReceiver, intentFilter);
+                            // action when discovery is finished
+                            intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+                            MainActivity.this.registerReceiver(broadcastReceiver, intentFilter);
 
-            // action when discovery is finished
-            intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-            MainActivity.this.registerReceiver(broadcastReceiver, intentFilter);
+                            Log.i(TAG, "BT is discovering...");
 
-            Log.i(TAG, "BT is discovering...");
+                            deviceListView.setAdapter(arrayAdapter);
+                            numberOfDectectedDevices.setText(String.valueOf(arrayAdapter.getCount()));
+                            arrayAdapter.notifyDataSetChanged();
+                            Log.i(TAG, "End of else--");
+                        }
 
-            deviceListView.setAdapter(arrayAdapter);
-            numberOfDectectedDevices.setText("Number of devices found: [" + arrayAdapter.getCount() + "]");
-            arrayAdapter.notifyDataSetChanged();
-            Log.i(TAG, "End of else--");
-        }
+                    }
+                }else {
+                    Log.i(TAG, "Discovering stopped");
+                    bluetoothAdapter.cancelDiscovery();
+                    scanSwitch.setText(R.string.scan_devices_default);
+                    scanSwitch.setChecked(false);
+                }
+            }
+        });
     }
     @Override
     protected void onDestroy() {

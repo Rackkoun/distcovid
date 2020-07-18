@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">distcovid</string>
     <string name="launch_scan">LAUNCH SCAN</string>
+    <string name="number_of_devices_found">Number of devices found:</string>
+    <string name="init_value_devices_found">0</string>
+    <string name="text_on">On</string>
+    <string name="text_off">Off</string>
+    <string name="scan_devices_default">Scan devices Off</string>
+    <string name="bluetooth_default">Bluetooth Off</string>
+    <string name="scan_devices_default1">Scan devices On</string>
+    <string name="bluetooth_default1">Bluetooth On</string>
 </resources>
