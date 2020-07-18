@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
+import cm.rulan.distcovid.measurements.BluetoothDistanceMeasurement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,12 +73,26 @@ public class MainActivity extends AppCompatActivity {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if(bluetoothDeviceList.size() < 1){
                     Log.i(TAG, "SIZE OF LIST: " + bluetoothDeviceList.size());
-                    arrayAdapter.add(device.getAddress());
+                    short rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
+                    double distance = BluetoothDistanceMeasurement.convertRSSI2MeterWithAccuracy(rssi);
+                    double distance2 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 0);
+                    double distance3 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 1);
+                    double distance4 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 2);
+                    if (device.getName() != null){
+                        arrayAdapter.add(device.getName()+"  --  "+distance +" meter");
+
+                    }else {
+                        arrayAdapter.add(device.getAddress()+"  --  "+distance +" meter");
+                    }
+                    Log.i(TAG, "D: ["+distance+"] m");
+                    Log.i(TAG, "D0: ["+distance2+"] m");
+                    Log.i(TAG, "D1: ["+distance3+"] m");
+                    Log.i(TAG, "D2: ["+distance4+"] m");
 
                     Log.i(TAG, "Device: Name: ["+device.getName()+" - - "+device.getAddress()+"]");
                     bluetoothDeviceList.add(device);
                     arrayAdapter.notifyDataSetChanged();
-                    numberOfDectectedDevices.setText("Number of devices found: [" + arrayAdapter.getCount()+"]");
+                    numberOfDectectedDevices.setText("Number of devices found: [" + String.valueOf(arrayAdapter.getCount())+"]");
                 }else{
                     Log.i(TAG, "SIZE OF LIST: " + bluetoothDeviceList.size());
                     boolean deviceIsInTheList = false;
@@ -87,12 +102,44 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                     if(!deviceIsInTheList){
-                        arrayAdapter.add(device.getAddress());
+                        short rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
+                        double distance = BluetoothDistanceMeasurement.convertRSSI2MeterWithAccuracy(rssi);
+                        double distance2 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 0);
+                        double distance3 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 1);
+                        double distance4 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 2);
+
+                        if (device.getName() != null){
+                            arrayAdapter.add(device.getName()+"  --  "+distance +" meter");
+                        }else {
+                            arrayAdapter.add(device.getAddress()+"  --  "+distance +" meter");
+                        }
+                        Log.i(TAG, "D: ["+distance+"] m");
+                        Log.i(TAG, "D0: ["+distance2+"] m");
+                        Log.i(TAG, "D1: ["+distance3+"] m");
+                        Log.i(TAG, "D2: ["+distance4+"] m");
 
                         bluetoothDeviceList.add(device);
                         arrayAdapter.notifyDataSetChanged();
                         numberOfDectectedDevices.setText("Number of devices found: [" + arrayAdapter.getCount()+"]");
                     }
+                }// Restart discovering after it is finished
+            }else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
+                Log.i(TAG, "--- -- Get count -- "+ arrayAdapter.getCount());
+                Log.i(TAG, "ACTION: ["+action+"]");
+                Log.i(TAG, "ACTION: ["+bluetoothAdapter.isDiscovering()+"]");
+                Log.i(TAG, "ACTION: ["+bluetoothAdapter.isEnabled()+"]");
+                Log.i(TAG, "----- End ----: ");
+                if (!bluetoothAdapter.isDiscovering() && bluetoothAdapter.isEnabled()){
+                    Log.i(TAG, "-- try to relaunch discovering");
+                    arrayAdapter.clear();
+                    bluetoothDeviceList.clear();
+                    arrayAdapter.notifyDataSetChanged();
+                    bluetoothAdapter.startDiscovery();
+
+                    IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+                    MainActivity.this.registerReceiver(broadcastReceiver, intentFilter);
+                    Log.i(TAG, "-- try to relaunch discovering: End --");
+
                 }
             }
         }
@@ -109,16 +156,25 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Make BT discoverable
-        else if(bluetoothAdapter.isDiscovering()){
-            bluetoothAdapter.cancelDiscovery();
+        if(bluetoothAdapter.isDiscovering()){
+            arrayAdapter.clear();
+            bluetoothDeviceList.clear();
+            arrayAdapter.notifyDataSetChanged();
             Log.i(TAG, "discovering is canceled...");
         }
         else {
             Log.i(TAG, "-- Entry else: adapter cleared");
             bluetoothAdapter.startDiscovery();
-
+            arrayAdapter.clear();
+            bluetoothDeviceList.clear();
+            arrayAdapter.notifyDataSetChanged();
             IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
             MainActivity.this.registerReceiver(broadcastReceiver, intentFilter);
+
+            // action when discovery is finished
+            intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+            MainActivity.this.registerReceiver(broadcastReceiver, intentFilter);
+
             Log.i(TAG, "BT is discovering...");
 
             deviceListView.setAdapter(arrayAdapter);
