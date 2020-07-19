@@ -1,5 +1,6 @@
 package cm.rulan.distcovid;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Build;
@@ -9,8 +10,29 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StatisticsActivity extends AppCompatActivity {
+
+    private final String TAG = "Stats";
+
+    private LineChart graph;
+    private List<Entry> entries;
+    private LineDataSet lineDataSet;
+    private ArrayList<ILineDataSet> iLineDataSets;
+    private List<String> xaxis;
+
+    @SuppressLint("SimpleDateFormat")
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    @SuppressLint("SimpleDateFormat")
+    private SimpleDateFormat sdf_time = new SimpleDateFormat("hh:mm:ss");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
