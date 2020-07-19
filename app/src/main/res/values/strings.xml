@@ -9,4 +9,6 @@
     <string name="bluetooth_default">Bluetooth Off</string>
     <string name="scan_devices_default1">Scan devices On</string>
     <string name="bluetooth_default1">Bluetooth On</string>
+    <string name="dist_init_val">0 meter</string>
+    <string name="main_view_title">Closest device (in meter)</string>
 </resources>

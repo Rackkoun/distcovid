@@ -8,6 +8,9 @@ package cm.rulan.distcovid.measurements;
 
 import android.util.Log;
 
+import java.util.Collections;
+import java.util.List;
+
 public class BluetoothDistanceMeasurement {
     // RAW Coded
     private static final short txPower = -60;
@@ -51,5 +54,12 @@ public class BluetoothDistanceMeasurement {
         distance = Math.round(distance * 100.0) / 100.0;
         Log.i(TAG, "-- no Accuracy end --");
         return distance;
+    }
+
+    public static List<Double> getClosetDevicesAscOrdered(List<Double> closestDeviceDistances){
+        Log.i(TAG, "Sorting start---");
+        Collections.sort(closestDeviceDistances);
+        Log.i(TAG, "Sorting end ---");
+        return closestDeviceDistances;
     }
 }
