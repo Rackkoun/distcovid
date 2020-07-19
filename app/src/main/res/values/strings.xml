@@ -11,4 +11,6 @@
     <string name="bluetooth_default1">Bluetooth On</string>
     <string name="dist_init_val">0 meter</string>
     <string name="main_view_title">Closest device (in meter)</string>
+    <string name="next_closest_device_str">Next device:</string>
+    <string name="show_warning_statistics">show warning statistics</string>
 </resources>

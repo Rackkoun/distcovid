@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import cm.rulan.distcovid.measurements.BluetoothDistanceMeasurement;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,8 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Switch bluetoothSwitch, scanSwitch;
     private TextView numberOfDectectedDevices;
-    private TextView closestDeviceDistance;
-    //private ListView deviceListView;
+    private TextView closestDeviceDistance, nextClosestDeviceDistance;
 
     private List<BluetoothDevice> bluetoothDeviceList;
     private ArrayAdapter<String> deviceNameList;
@@ -51,9 +51,8 @@ public class MainActivity extends AppCompatActivity {
     private void initViews(){
         numberOfDectectedDevices = findViewById(R.id.number_of_devices_found_int_id);
         closestDeviceDistance = findViewById(R.id.closest_dist_id);
-
+        nextClosestDeviceDistance = findViewById(R.id.next_closest_value_id);
         setAnimationPulse();
-        //deviceListView = findViewById(R.id.device_list_id);
 
         bluetoothSwitch = findViewById(R.id.bluetooth_on_off_id);
         scanSwitch = findViewById(R.id.scan_start_stop_id);
@@ -143,10 +142,8 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(TAG, "Device: Name: ["+device.getName()+" - - "+device.getAddress()+"]");
                     bluetoothDeviceList.add(device);
                     deviceNameList.notifyDataSetChanged();
-                    final List<Double> minDist = BluetoothDistanceMeasurement.getClosetDevicesAscOrdered(closestDevicesDistAccurate);
-                    String pulseMsg = minDist.get(0) + " " + "meter";
-                    reformatTextSize(pulseMsg);
                     Log.i(TAG, "size of double list: ["+closestDevicesDistAccurate.size()+"]");
+                    sortDistance(closestDevicesDistAccurate);
                     numberOfDectectedDevices.setText(String.valueOf(deviceNameList.getCount()));
                 }else{
                     boolean deviceIsInTheList = false;
@@ -176,9 +173,8 @@ public class MainActivity extends AppCompatActivity {
                         Log.i(TAG, "D1: ["+distance3+"] m");
                         Log.i(TAG, "D2: ["+distance4+"] m");
                         Log.i(TAG, "size of double list: ["+closestDevicesDistAccurate.size()+"]");
-                        final List<Double> minDist = BluetoothDistanceMeasurement.getClosetDevicesAscOrdered(closestDevicesDistAccurate);
-                        String pulseMsg = minDist.get(0) + " " + "meter";
-                        reformatTextSize(pulseMsg);
+
+                        sortDistance(closestDevicesDistAccurate);
                         bluetoothDeviceList.add(device);
                         deviceNameList.notifyDataSetChanged();
                         numberOfDectectedDevices.setText(String.valueOf(deviceNameList.getCount()));
@@ -190,10 +186,6 @@ public class MainActivity extends AppCompatActivity {
                         Log.i(TAG, "Block here Device always in the list---- Count down [-- "+detectionCountDown+" --]");
                         if(detectionCountDown == 0){
                             Log.i(TAG, "Retry to set scan as finished");
-                            //bluetoothAdapter.cancelDiscovery();
-                            //MainActivity.this.unregisterReceiver(broadcastReceiver);
-                            //IntentFilter intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-                            //MainActivity.this.registerReceiver(broadcastReceiver, intentFilter);
                             Log.i(TAG, "size of double list: ["+closestDevicesDistAccurate.size()+"]");
                             Log.i(TAG, "Re init countDown");
                             detectionCountDown = 4;
@@ -201,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.i(TAG, "------ Discov status 4: ["+bluetoothAdapter.isDiscovering()+"]");
                             Log.i(TAG, "ACTION enabled: ["+bluetoothAdapter.isEnabled()+"]");
                             Log.i(TAG, "ACTION: ["+action+"]");
-                            //bluetoothAdapter.startDiscovery();
+
                             Log.i(TAG, "-- try to relaunch discovering: re-yo --");
                             Log.i(TAG, "------ Discov status 4: ["+bluetoothAdapter.isDiscovering()+"]");
                             Log.i(TAG, "ACTION enabled: ["+bluetoothAdapter.isEnabled()+"]");
@@ -240,12 +232,26 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private void sortDistance(List<Double> distances){
+        Log.i(TAG, "---- starting sort");
+
+        Collections.sort(distances);
+        String first = distances.get(0) +" "+"meter";
+        String second = 0 + " "+"meter";
+        if (distances.size()>1){
+            second = distances.get(1) +" "+"meter";
+        }
+        reformatTextSize(first);
+        nextClosestDeviceDistance.setText(second);
+        Log.i(TAG, "ending sort ----");
+    }
     private void resetMemberVariables(){
         closestDevicesDistAccurate.clear();
         closestDevicesDist.clear();
         bluetoothDeviceList.clear();
         deviceNameList.clear();
-
+        String second = 0 + " "+"meter";
+        nextClosestDeviceDistance.setText(second);
         numberOfDectectedDevices.setText(getResources().getText(R.string.init_value_devices_found));
         String pulseResource = getResources().getString(R.string.dist_init_val);
         Log.i(TAG, "Content Pulse resource re-init: ["+pulseResource+"]");
@@ -299,6 +305,7 @@ public class MainActivity extends AppCompatActivity {
                     bluetoothAdapter.cancelDiscovery();
                     scanSwitch.setText(R.string.scan_devices_default);
                     scanSwitch.setChecked(false);
+                    resetMemberVariables();
                 }
             }
         });
@@ -335,15 +342,5 @@ public class MainActivity extends AppCompatActivity {
         closestDeviceDistance.setBackgroundResource(R.drawable.pulse_list);
         AnimationDrawable pulseAnim = (AnimationDrawable) closestDeviceDistance.getBackground();
         pulseAnim.start();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.i(TAG, "-- onResume entry");
-//        String pulseResource = getResources().getString(R.string.dist_init_val);
-//        Log.i(TAG, "Content Pulse resource before: ["+pulseResource+"]");
-//        reformatTextSize(pulseResource);
-        Log.i(TAG, "onResume end ----");
     }
 }
