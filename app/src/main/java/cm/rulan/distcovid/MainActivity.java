@@ -210,6 +210,26 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 }// Restart discovering after it is finished
+            }else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
+                Log.i(TAG, "--- -- Get count -- "+ deviceNameList.getCount());
+                Log.i(TAG, "ACTION: ["+action+"]");
+                Log.i(TAG, "ACTION: ["+bluetoothAdapter.isDiscovering()+"]");
+                Log.i(TAG, "ACTION: ["+bluetoothAdapter.isEnabled()+"]");
+                deviceNameList.clear();
+                bluetoothDeviceList.clear();
+                closestDevicesDistAccurate.clear();
+                numberOfDectectedDevices.setText(getResources().getText(R.string.init_value_devices_found));
+                deviceNameList.notifyDataSetChanged();
+                bluetoothAdapter.startDiscovery();
+                Log.i(TAG, "----- End ----: ");
+                if (!bluetoothAdapter.isDiscovering() && bluetoothAdapter.isEnabled()){
+                    Log.i(TAG, "-- try to relaunch discovering");
+
+                    IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+                    MainActivity.this.registerReceiver(broadcastReceiver, intentFilter);
+                    Log.i(TAG, "-- try to relaunch discovering: End --");
+
+                }
             }else {
                 Log.i(TAG, "-- scan mode 3 --"+ bluetoothAdapter.getScanMode()+ "  scan state"+ bluetoothAdapter.getState());
                 Log.i(TAG, "-- try to relaunch discovering: re-yo --");
@@ -246,10 +266,10 @@ public class MainActivity extends AppCompatActivity {
                     }else {
                         scanSwitch.setText(R.string.scan_devices_default1);
                         if (bluetoothAdapter.isDiscovering()) {
-                            resetMemberVariables();
-//                            arrayAdapter.clear();
-//                            bluetoothDeviceList.clear();
-//                            arrayAdapter.notifyDataSetChanged();
+                            //resetMemberVariables();
+                            deviceNameList.clear();
+                            bluetoothDeviceList.clear();
+                            deviceNameList.notifyDataSetChanged();
                             Log.i(TAG, "discovering is canceled...");
                         } else {
                             Log.i(TAG, "-- Entry else: adapter cleared");
