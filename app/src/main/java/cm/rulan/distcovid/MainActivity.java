@@ -1,5 +1,6 @@
 package cm.rulan.distcovid;
 
+import android.app.ActivityOptions;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -7,11 +8,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.AnimationDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
+import android.transition.Slide;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import cm.rulan.distcovid.measurements.BluetoothDistanceMeasurement;
@@ -40,12 +46,16 @@ public class MainActivity extends AppCompatActivity {
     private List<Double> closestDevicesDist;
     private BluetoothAdapter bluetoothAdapter = null;
 
+    // for test purpose
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         initViews();
+        setTransitionAnimation();
     }
 
     private void initViews(){
@@ -342,5 +352,28 @@ public class MainActivity extends AppCompatActivity {
         closestDeviceDistance.setBackgroundResource(R.drawable.pulse_list);
         AnimationDrawable pulseAnim = (AnimationDrawable) closestDeviceDistance.getBackground();
         pulseAnim.start();
+    }
+
+    private void setTransitionAnimation(){
+        if (Build.VERSION.SDK_INT > 20){
+            Slide slide = new Slide();
+            slide.setSlideEdge(Gravity.TOP);
+            slide.setDuration(350);
+            slide.setInterpolator(new DecelerateInterpolator());
+            getWindow().setExitTransition(slide);
+            getWindow().setEnterTransition(slide);
+        }
+    }
+
+    public void goToStatisticActivity(View view){
+        Intent intent = new Intent(this, StatisticsActivity.class);
+
+        if (Build.VERSION.SDK_INT > 20){
+            ActivityOptions activityOptions = ActivityOptions
+                    .makeSceneTransitionAnimation(this);
+            startActivity(intent, activityOptions.toBundle());
+        }else {
+            startActivity(intent);
+        }
     }
 }

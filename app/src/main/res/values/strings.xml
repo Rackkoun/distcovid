@@ -13,4 +13,6 @@
     <string name="main_view_title">Closest device (in meter)</string>
     <string name="next_closest_device_str">Next device:</string>
     <string name="show_warning_statistics">show warning statistics</string>
+    <string name="stats_title">Closest devices with longer periode</string>
+    <string name="go_back_to_main_screen">Go back to Main screen</string>
 </resources>

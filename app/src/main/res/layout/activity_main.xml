@@ -133,5 +133,6 @@
             android:text="@string/show_warning_statistics"
             android:background="@drawable/button_style"
             android:textColor="@color/text_white"
+            android:onClick="goToStatisticActivity"
     />
 </androidx.constraintlayout.widget.ConstraintLayout>

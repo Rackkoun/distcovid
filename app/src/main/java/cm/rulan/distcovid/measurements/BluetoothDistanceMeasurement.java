@@ -55,11 +55,4 @@ public class BluetoothDistanceMeasurement {
         Log.i(TAG, "-- no Accuracy end --");
         return distance;
     }
-
-    public static List<Double> getClosetDevicesAscOrdered(List<Double> closestDeviceDistances){
-        Log.i(TAG, "Sorting start---");
-        Collections.sort(closestDeviceDistances);
-        Log.i(TAG, "Sorting end ---");
-        return closestDeviceDistances;
-    }
 }
