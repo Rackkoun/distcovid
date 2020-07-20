@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import cm.rulan.distcovid.model.DiscovidModelObject;
+import cm.rulan.distcovid.model.DistcovidModelObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ public class StatsDataDB extends SQLiteOpenHelper {
     private static final String _ID = "_id";
     private static final String COLUMN_DISTANCE = "distance"; // in meter
     private static final String COLUMN_DATETIME = "datetime";
-    private static final String COLUMN_DURING = "during"; // in minutes
+    //private static final String COLUMN_DURING = "during"; // in minutes
 
     // drop table
     private static final String DROP_WARNING_TABLE = "DROP TABLE IF EXISTS " + WARNING_TABLE;
@@ -41,7 +41,7 @@ public class StatsDataDB extends SQLiteOpenHelper {
             String sqlQuery = "CREATE TABLE "+ WARNING_TABLE +
                     "("+ _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_DISTANCE + " REAL NOT NULL, " +
-                    COLUMN_DURING + " INTEGER, " +
+                   // COLUMN_DURING + " INTEGER, " +
                     COLUMN_DATETIME + " TEXT);";
 
             db.execSQL(sqlQuery);
@@ -64,29 +64,29 @@ public class StatsDataDB extends SQLiteOpenHelper {
     }
 
     // insert value int the DB
-    public void insertValue(double distance, int during, long datetime){
+    public void insertValue(double distance, long datetime){
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
 
         try {
             ContentValues values = new ContentValues();
             values.put(COLUMN_DISTANCE, distance);
-            values.put(COLUMN_DURING, during);
+            //values.put(COLUMN_DURING, during);
             values.put(COLUMN_DATETIME, datetime);
 
             long id = db.insert(WARNING_TABLE, null, values);
             db.setTransactionSuccessful();
             Log.i(TAG, "Values ("+
-            id+", "+distance+", "+ during +", "+ datetime+", ): successfully inserted");
+            id+", "+distance+", " +", "+ datetime+", ): successfully inserted");
         }catch (Exception e){
             Log.i(TAG, "Error while inserting values");
         }
     }
 
     // read db content
-    public List<DiscovidModelObject> getWarnings(){
+    public List<DistcovidModelObject> getWarnings(){
         SQLiteDatabase db = getReadableDatabase();
-        List<DiscovidModelObject> warnings = new ArrayList<>();
+        List<DistcovidModelObject> warnings = new ArrayList<>();
 
         Cursor cursor = db.query(WARNING_TABLE,
                 null, null, null,
@@ -96,10 +96,10 @@ public class StatsDataDB extends SQLiteOpenHelper {
             do {
                 long id = cursor.getLong(0);
                 double distance = cursor.getDouble(1);
-                int during = cursor.getInt(2);
-                long datetime = cursor.getLong(3);
+                //int during = cursor.getInt(2);
+                long datetime = cursor.getLong(2);
 
-                DiscovidModelObject modelObject = new DiscovidModelObject(distance, during, datetime);
+                DistcovidModelObject modelObject = new DistcovidModelObject(distance, datetime);
                 modelObject.set_id(id);
                 Log.i(TAG, "Object got:\n"+modelObject.toString());
                 warnings.add(modelObject);

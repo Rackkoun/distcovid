@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
@@ -46,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
     private List<Double> closestDevicesDist;
     private BluetoothAdapter bluetoothAdapter = null;
 
-    // for test purpose
-
+    // alarming user through phone vibration
+    Vibrator vibrator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         deviceNameList = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     private void bluetoothOnOff(){

@@ -1,18 +1,16 @@
 package cm.rulan.distcovid.model;
 
-public class DiscovidModelObject {
+public class DistcovidModelObject {
     private long _id;
     private double distance;
-    private int during;
     private long datetime;
 
     // for formatting
     private String formattedDate;
     private String formattedTime;
 
-    public DiscovidModelObject(double distance, int during, long datetime){
+    public DistcovidModelObject(double distance, long datetime){
         this.distance = distance;
-        this.during = during;
         this.datetime = datetime;
         _id = -1;
     }
@@ -31,14 +29,6 @@ public class DiscovidModelObject {
 
     public void setDistance(double distance) {
         this.distance = distance;
-    }
-
-    public int getDuring() {
-        return during;
-    }
-
-    public void setDuring(int during) {
-        this.during = during;
     }
 
     public long getDatetime() {
@@ -70,7 +60,6 @@ public class DiscovidModelObject {
         return "DiscovidModelObject{" +
                 "_id=" + _id +
                 ", distance=" + distance +
-                ", during=" + during +
                 ", datetime=" + datetime +
                 ", formattedDate='" + formattedDate + '\'' +
                 ", formattedTime='" + formattedTime + '\'' +
