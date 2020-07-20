@@ -208,8 +208,19 @@ public class MainActivity extends AppCompatActivity {
                         double distance50 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 8);
 
                         if (device.getName() != null){
+                            Log.i(TAG, "Name: "+ device.getName());
                             deviceNameList.add(device.getName()+"  --  "+distance +" meter");
                             closestDevicesDistAccurate.add(distance);
+                            Log.i(TAG, "D: ["+distance+" m], signal ["+rssi+" dbm]");
+                            Log.i(TAG, "D2: ["+distance2+"], signal ["+rssi+" dbm]");
+                            Log.i(TAG, "D3: ["+distance3+"], signal ["+rssi+" dbm]");
+                            Log.i(TAG, "D4: ["+distance4+"], signal ["+rssi+" dbm]");
+                            Log.i(TAG, "D10: ["+distance10+"], signal ["+rssi+" dbm]");
+                            Log.i(TAG, "D15: ["+distance15+"], signal ["+rssi+" dbm]");
+                            Log.i(TAG, "D20: ["+distance20+"], signal ["+rssi+" dbm]");
+                            Log.i(TAG, "D25: ["+distance25+"], signal ["+rssi+" dbm]");
+                            Log.i(TAG, "D30: ["+distance30+"], signal ["+rssi+" dbm]");
+                            Log.i(TAG, "D50: ["+distance50+"], signal ["+rssi+" dbm]");
                         }else {
                             deviceNameList.add(device.getAddress()+"  --  "+distance +" meter");
                             closestDevicesDistAccurate.add(distance);

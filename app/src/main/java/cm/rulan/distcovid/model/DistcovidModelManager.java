@@ -4,12 +4,10 @@ import android.annotation.SuppressLint;
 import android.os.Build;
 import android.util.Log;
 import androidx.annotation.RequiresApi;
+import cm.rulan.distcovid.model.comparators.ModelDistanceComparator;
 
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /*
@@ -27,13 +25,12 @@ public class DistcovidModelManager {
     private final SimpleDateFormat sdf_time = new SimpleDateFormat("hh:mm:ss");
     private Date date = new Date();
 
-    public DistcovidModelManager() {}
+    public DistcovidModelManager() {Log.i(TAG, "--- constructor Manager called ---");}
 
     //get push up object grouped by days
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public List<DistcovidModelObject> groupDailyDistance(List<DistcovidModelObject> warnings){
-        final Comparator<DistcovidModelObject> warningComparator =
-                Comparator.comparingDouble(DistcovidModelObject::getDistance); //get the warning object that have the greatest value "max" (only one value per day)
+        //final Comparator<DistcovidModelObject> warningComparator =
+        //        Comparator.comparingDouble(DistcovidModelObject::getDistance); //get the warning object that have the greatest value "max" (only one value per day)
 
         if(warnings.size() > 0){
             for (DistcovidModelObject warning : warnings) {
@@ -42,51 +39,58 @@ public class DistcovidModelManager {
                 warning.setFormattedTime(sdf_time.format(date));
             }
 
-            List<DistcovidModelObject> newList = // Collect elements to a new list
+            /*List<DistcovidModelObject> newList = // Collect elements to a new list
                     warnings.stream()
                             .collect(Collectors.groupingBy(DistcovidModelObject::getFormattedDate,
                                     Collectors.maxBy(warningComparator)))
                             .values().stream().map(Optional::get)
-                            .collect(Collectors.toList());
+                            .collect(Collectors.toList());*/
 
-            Log.d(getClass().getSimpleName(),"Size: "+ newList.size());
-            for (DistcovidModelObject p: newList) {
+            Log.i(TAG, "Sorting started...");
+            Collections.sort(warnings);
+            Log.i(TAG, "Sorting ended");
+            Log.i(TAG,"Size: "+ warnings.size());
+            for (DistcovidModelObject p: warnings) {
                 Log.i(TAG, "ID: " +p.get_id() +"   Dist:" + p.getDistance() + "Date: "+ p.getFormattedDate()+ "   Time: "+p.getFormattedTime());
             }
-            return newList;
+            return warnings;
         }
         return null;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public List<DistcovidModelObject> reorderedDailyDistance(List<DistcovidModelObject> list){
-
+        Log.i(TAG, "--- reordered daily start ---");
         List<DistcovidModelObject> reorderedList  = groupDailyDistance(list);
-        final Comparator<DistcovidModelObject> datetimeComparator = //get Min of Object
-                Comparator.comparingLong(DistcovidModelObject::getDatetime);
+        /*final Comparator<DistcovidModelObject> datetimeComparator = //get Min of Object
+                Comparator.comparingLong(DistcovidModelObject::getDatetime);*/
 
-        Log.d(getClass().getSimpleName(),"size reordered List: " + reorderedList.size());
-        List<DistcovidModelObject> l = reorderedList.stream()
+        Log.i(TAG,"size reordered List: " + reorderedList.size());
+       /* List<DistcovidModelObject> l = reorderedList.stream()
                 .sorted(datetimeComparator)
-                .collect(Collectors.toList());
-        for (DistcovidModelObject p: l){
-            Log.d(getClass().getSimpleName(),"ID : " +p.get_id() + "   Dist: "+p.getDistance()
+                .collect(Collectors.toList());*/
+        Collections.sort(reorderedList, new ModelDistanceComparator());
+
+        for (DistcovidModelObject p: reorderedList){
+            Log.d(TAG,"ID : " +p.get_id() + "   Dist: "+p.getDistance()
                     +"   Time: "+p.getFormattedTime()+"   Date: "+p.getFormattedDate());
         }
-        return l;
+
+        Log.i(TAG, "--- reordered daily end ---");
+        return reorderedList;
     }
 
     // get the object with the highest value
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public DistcovidModelObject getClosestDistance(List<DistcovidModelObject> list){
+        Log.i(TAG, "--- get closet distance method start ---");
         if (list.size() > 0){
-            DistcovidModelObject war = list
-                    .stream()
+            Collections.sort(list, new ModelDistanceComparator());
+            DistcovidModelObject war = list.get(0);
+                    /*.stream()
                     .min(Comparator.comparing(DistcovidModelObject::getDistance))
-                    .get();
+                    .get();*/
             war.setFormattedTime(sdf_time.format(war.getDatetime()));
             war.setFormattedDate(sdf_days.format(war.getDatetime()));
-            Log.d(getClass().getSimpleName(), "Highest use::\n" +
+            Log.d(TAG, "Highest use::\n" +
                     "ID: "+ war.get_id()+"\nmin Dist: " + war.getDistance()+
                     "\nDate: " + war.getFormattedDate()+
                     "\nTime: "+ war.getFormattedTime());

@@ -1,6 +1,6 @@
 package cm.rulan.distcovid.model;
 
-public class DistcovidModelObject {
+public class DistcovidModelObject implements java.lang.Comparable<DistcovidModelObject>{
     private long _id;
     private double distance;
     private long datetime;
@@ -64,5 +64,12 @@ public class DistcovidModelObject {
                 ", formattedDate='" + formattedDate + '\'' +
                 ", formattedTime='" + formattedTime + '\'' +
                 '}';
+    }
+
+    @Override
+    public int compareTo(DistcovidModelObject o) {
+        if (getFormattedDate() == null || o.getFormattedDate() == null)
+            return 0;
+        return getFormattedDate().compareTo(o.getFormattedDate());
     }
 }

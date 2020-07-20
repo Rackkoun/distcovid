@@ -193,7 +193,7 @@ public class StatisticsActivity extends AppCompatActivity {
     private List<DistcovidModelObject> onRead(){
         Log.i(TAG, "-- Entry onRead---- ");
         List<DistcovidModelObject> warningList = manager.groupDailyDistance(dbHelper.getWarnings());
-
+        Log.i(TAG, "--- warning list --- ["+warningList+"]");
         if (warningList != null){
             Log.i(TAG, "--- warning is not != null: ");
             DistcovidModelObject w = manager.getClosestDistance(warningList);
@@ -250,6 +250,7 @@ public class StatisticsActivity extends AppCompatActivity {
     }
 
     private void reset(){
+        Log.i(TAG, "--- reset start ---");
         entries = null;
         lineDataSet = null;
         xaxis = null;
@@ -258,7 +259,7 @@ public class StatisticsActivity extends AppCompatActivity {
         entries = new ArrayList<>();
         xaxis = new ArrayList<>();
         iLineDataSets = new ArrayList<>();
-
+        Log.i(TAG, "--- reset finish ---");
     }
 
     private void setGraphViewPort(){
