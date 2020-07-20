@@ -42,12 +42,6 @@
                 android:background="@drawable/pulse_anim"
         />
 
-        <!--        <ListView-->
-        <!--                android:id="@+id/device_list_id"-->
-        <!--                android:layout_width="match_parent"-->
-        <!--                android:layout_height="300dp">-->
-
-        <!--        </ListView>-->
     </RelativeLayout>
 
     <TextView
@@ -101,14 +95,14 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/detection_view_layout_id"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="15dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginStart="@dimen/margin_side_dimens"
+            android:layout_marginBottom="@dimen/margin_top_bottom_dimens"
             android:text="@string/bluetooth_default"
-            android:paddingRight="5dp"
+            android:paddingEnd="@dimen/padding_between"
             android:layout_marginTop="20dp"
             android:textOn="@string/text_on"
             android:textOff="@string/text_off"
-    />
+            tools:ignore="RtlSymmetry"/>
 
     <Switch
             android:id="@+id/scan_start_stop_id"
@@ -116,13 +110,13 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/bluetooth_on_off_id"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="15dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginStart="@dimen/margin_side_dimens"
+            android:layout_marginBottom="@dimen/margin_top_bottom_dimens"
             android:text="@string/scan_devices_default"
             android:paddingEnd="10dp"
             android:textOff="@string/text_off"
             android:textOn="@string/text_on"
-    />
+            tools:ignore="RtlSymmetry"/>
 
     <Button
             android:id="@+id/stats_btn_id"

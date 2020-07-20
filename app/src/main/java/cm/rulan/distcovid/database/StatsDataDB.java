@@ -32,11 +32,14 @@ public class StatsDataDB extends SQLiteOpenHelper {
     private SQLiteDatabase db;
 
     public StatsDataDB(Context context){
+
         super(context, DBNAME, null, DBVERSION);
+        Log.i(TAG, "StatDB constructor leaved ---> ");
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        Log.i(TAG, "--- onCreate DB: query start ---->");
         try {
             String sqlQuery = "CREATE TABLE "+ WARNING_TABLE +
                     "("+ _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -47,8 +50,9 @@ public class StatsDataDB extends SQLiteOpenHelper {
             db.execSQL(sqlQuery);
             Log.i(TAG, "DB "+ getDatabaseName()+ " created");
         }catch (Exception e){
-            Log.e(TAG, "Error while creating der DB: "+ e.getMessage());
+            Log.i(TAG, "Error while creating der DB: "+ e.getMessage());
         }
+        Log.i(TAG, "--- onCreate DB query end ---->");
     }
 
     @Override

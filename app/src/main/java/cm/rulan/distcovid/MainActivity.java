@@ -1,5 +1,6 @@
 package cm.rulan.distcovid;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -7,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,10 +23,14 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
+import cm.rulan.distcovid.database.StatsDataDB;
 import cm.rulan.distcovid.measurements.BluetoothDistanceMeasurement;
+import cm.rulan.distcovid.model.DistcovidModelObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,7 +38,12 @@ public class MainActivity extends AppCompatActivity {
 // source spannable Text: https://stackoverflow.com/questions/16335178/different-font-size-of-strings-in-the-same-textview/16335416
 
     private static final String TAG = "MAIN_TAG";
-    private static int detectionCountDown = 4;
+    //private static int detectionCountDown = 4;
+
+    @SuppressLint("SimpleDateFormat")
+    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    @SuppressLint("SimpleDateFormat")
+    private final SimpleDateFormat sdf_time = new SimpleDateFormat("hh:mm:ss");
 
     private static final int REQUEST_ENABLE_BT = 1;
 
@@ -49,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
     // alarming user through phone vibration
     Vibrator vibrator;
+    private StatsDataDB dbHelper;
+    private SQLiteDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +88,9 @@ public class MainActivity extends AppCompatActivity {
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+        dbHelper = new StatsDataDB(this);
+        database = dbHelper.getWritableDatabase();
     }
 
     private void bluetoothOnOff(){
@@ -138,6 +154,12 @@ public class MainActivity extends AppCompatActivity {
                     double distance2 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 0);
                     double distance3 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 1);
                     double distance4 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 2);
+                    double distance10 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 3);
+                    double distance15 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 4);
+                    double distance20 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 5);
+                    double distance25 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 6);
+                    double distance30 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 7);
+                    double distance50 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 8);
                     if (device.getName() != null){
                         deviceNameList.add(device.getName()+"  --  "+distance +" meter");
                         closestDevicesDistAccurate.add(distance);
@@ -146,10 +168,16 @@ public class MainActivity extends AppCompatActivity {
                         deviceNameList.add(device.getAddress()+"  --  "+distance +" meter");
                         closestDevicesDistAccurate.add(distance);
                     }
-                    Log.i(TAG, "D: ["+distance+"] m");
-                    Log.i(TAG, "D0: ["+distance2+"] m");
-                    Log.i(TAG, "D1: ["+distance3+"] m");
-                    Log.i(TAG, "D2: ["+distance4+"] m");
+                    Log.i(TAG, "D: ["+distance+" m], signal ["+rssi+" dbm]");
+                    Log.i(TAG, "D2: ["+distance2+"], signal ["+rssi+" dbm]");
+                    Log.i(TAG, "D3: ["+distance3+"], signal ["+rssi+" dbm]");
+                    Log.i(TAG, "D4: ["+distance4+"], signal ["+rssi+" dbm]");
+                    Log.i(TAG, "D10: ["+distance10+"], signal ["+rssi+" dbm]");
+                    Log.i(TAG, "D15: ["+distance15+"], signal ["+rssi+" dbm]");
+                    Log.i(TAG, "D20: ["+distance20+"], signal ["+rssi+" dbm]");
+                    Log.i(TAG, "D25: ["+distance25+"], signal ["+rssi+" dbm]");
+                    Log.i(TAG, "D30: ["+distance30+"], signal ["+rssi+" dbm]");
+                    Log.i(TAG, "D50: ["+distance50+"], signal ["+rssi+" dbm]");
 
                     Log.i(TAG, "Device: Name: ["+device.getName()+" - - "+device.getAddress()+"]");
                     bluetoothDeviceList.add(device);
@@ -172,6 +200,12 @@ public class MainActivity extends AppCompatActivity {
                         double distance2 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 0);
                         double distance3 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 1);
                         double distance4 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 2);
+                        double distance10 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 3);
+                        double distance15 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 4);
+                        double distance20 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 5);
+                        double distance25 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 6);
+                        double distance30 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 7);
+                        double distance50 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 8);
 
                         if (device.getName() != null){
                             deviceNameList.add(device.getName()+"  --  "+distance +" meter");
@@ -180,45 +214,39 @@ public class MainActivity extends AppCompatActivity {
                             deviceNameList.add(device.getAddress()+"  --  "+distance +" meter");
                             closestDevicesDistAccurate.add(distance);
                         }
-                        Log.i(TAG, "D: ["+distance+"] m");
-                        Log.i(TAG, "D0: ["+distance2+"] m");
-                        Log.i(TAG, "D1: ["+distance3+"] m");
-                        Log.i(TAG, "D2: ["+distance4+"] m");
+                        Log.i(TAG, "D: ["+distance+" m], signal ["+rssi+" dbm]");
+                        Log.i(TAG, "D2: ["+distance2+"], signal ["+rssi+" dbm]");
+                        Log.i(TAG, "D3: ["+distance3+"], signal ["+rssi+" dbm]");
+                        Log.i(TAG, "D4: ["+distance4+"], signal ["+rssi+" dbm]");
+                        Log.i(TAG, "D10: ["+distance10+"], signal ["+rssi+" dbm]");
+                        Log.i(TAG, "D15: ["+distance15+"], signal ["+rssi+" dbm]");
+                        Log.i(TAG, "D20: ["+distance20+"], signal ["+rssi+" dbm]");
+                        Log.i(TAG, "D25: ["+distance25+"], signal ["+rssi+" dbm]");
+                        Log.i(TAG, "D30: ["+distance30+"], signal ["+rssi+" dbm]");
+                        Log.i(TAG, "D50: ["+distance50+"], signal ["+rssi+" dbm]");
                         Log.i(TAG, "size of double list: ["+closestDevicesDistAccurate.size()+"]");
 
                         sortDistance(closestDevicesDistAccurate);
                         bluetoothDeviceList.add(device);
                         deviceNameList.notifyDataSetChanged();
                         numberOfDectectedDevices.setText(String.valueOf(deviceNameList.getCount()));
-                    }else {
-                        Log.i(TAG, "------ Discov status 4: ["+bluetoothAdapter.isDiscovering()+"]");
-                        Log.i(TAG, "ACTION enabled: ["+bluetoothAdapter.isEnabled()+"]");
-                        Log.i(TAG, "ACTION: ["+action+"]");
-                        detectionCountDown--;
-                        Log.i(TAG, "Block here Device always in the list---- Count down [-- "+detectionCountDown+" --]");
-                        if(detectionCountDown == 0){
-                            Log.i(TAG, "Retry to set scan as finished");
-                            Log.i(TAG, "size of double list: ["+closestDevicesDistAccurate.size()+"]");
-                            Log.i(TAG, "Re init countDown");
-                            detectionCountDown = 4;
-                            Log.i(TAG, "-- scan mode 2 --"+ bluetoothAdapter.getScanMode()+ "  scan state"+ bluetoothAdapter.getState());
-                            Log.i(TAG, "------ Discov status 4: ["+bluetoothAdapter.isDiscovering()+"]");
-                            Log.i(TAG, "ACTION enabled: ["+bluetoothAdapter.isEnabled()+"]");
-                            Log.i(TAG, "ACTION: ["+action+"]");
-
-                            Log.i(TAG, "-- try to relaunch discovering: re-yo --");
-                            Log.i(TAG, "------ Discov status 4: ["+bluetoothAdapter.isDiscovering()+"]");
-                            Log.i(TAG, "ACTION enabled: ["+bluetoothAdapter.isEnabled()+"]");
-                            Log.i(TAG, "ACTION: ["+action+"]");
-                        }
                     }
+//                    else {
+//                        Log.i(TAG, "------ Discov status 4: ["+bluetoothAdapter.isDiscovering()+"]");
+//                        Log.i(TAG, "ACTION enabled: ["+bluetoothAdapter.isEnabled()+"]");
+//                        Log.i(TAG, "ACTION: ["+action+"]");
+//                        //detectionCountDown--;
+//                        //Log.i(TAG, "Block here Device always in the list---- Count down [-- "+detectionCountDown+" --]");
+//                        if(detectionCountDown == 0){
+//                            Log.i(TAG, "Retry to set scan as finished");
+//                            Log.i(TAG, "size of double list: ["+closestDevicesDistAccurate.size()+"]");
+//                        }
+//                    }
 
                 }// Restart discovering after it is finished
             }else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
                 Log.i(TAG, "--- -- Get count -- "+ deviceNameList.getCount());
                 Log.i(TAG, "ACTION: ["+action+"]");
-                Log.i(TAG, "ACTION: ["+bluetoothAdapter.isDiscovering()+"]");
-                Log.i(TAG, "ACTION: ["+bluetoothAdapter.isEnabled()+"]");
                 deviceNameList.clear();
                 bluetoothDeviceList.clear();
                 closestDevicesDistAccurate.clear();
@@ -234,13 +262,14 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(TAG, "-- try to relaunch discovering: End --");
 
                 }
-            }else {
-                Log.i(TAG, "-- scan mode 3 --"+ bluetoothAdapter.getScanMode()+ "  scan state"+ bluetoothAdapter.getState());
-                Log.i(TAG, "-- try to relaunch discovering: re-yo --");
-                Log.i(TAG, "------ Discov status 4: ["+bluetoothAdapter.isDiscovering()+"]");
-                Log.i(TAG, "ACTION enabled: ["+bluetoothAdapter.isEnabled()+"]");
-                Log.i(TAG, "ACTION: ["+action+"]");
             }
+//            else {
+//                Log.i(TAG, "-- scan mode 3 --"+ bluetoothAdapter.getScanMode()+ "  scan state"+ bluetoothAdapter.getState());
+//                Log.i(TAG, "-- try to relaunch discovering: re-yo --");
+//                Log.i(TAG, "------ Discov status 4: ["+bluetoothAdapter.isDiscovering()+"]");
+//                Log.i(TAG, "ACTION enabled: ["+bluetoothAdapter.isEnabled()+"]");
+//                Log.i(TAG, "ACTION: ["+action+"]");
+//            }
         }
     };
 
@@ -296,6 +325,7 @@ public class MainActivity extends AppCompatActivity {
                             deviceNameList.clear();
                             bluetoothDeviceList.clear();
                             deviceNameList.notifyDataSetChanged();
+                            closestDevicesDistAccurate.clear();
                             IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                             MainActivity.this.registerReceiver(broadcastReceiver, intentFilter);
 
@@ -377,5 +407,19 @@ public class MainActivity extends AppCompatActivity {
         }else {
             startActivity(intent);
         }
+    }
+
+    // add new value to the DB
+    private void insertDistance(double distance){
+
+        long datetime = System.currentTimeMillis();
+        dbHelper.insertValue(distance, datetime);
+        Log.d(TAG, "Value: ( "+distance+" ) saved in the DB");
+
+        DistcovidModelObject warning = new DistcovidModelObject(distance, datetime);
+        warning.setFormattedDate(sdf.format(new Date(datetime)));
+        warning.setFormattedTime(sdf_time.format(new Date(datetime)));
+
+        //onUpdateGraph(warning);
     }
 }

@@ -68,12 +68,17 @@ public class StatisticsActivity extends AppCompatActivity {
     }
 
     private void initViews(){
+        Log.i(TAG, "--- init start STATS ---->");
+        graph = findViewById(R.id.chart_id);
         dbHelper = new StatsDataDB(this);
-        database = dbHelper.getWritableDatabase();
+        Log.i(TAG, "--- DB initialized STATS ---->");
+        database = dbHelper.getReadableDatabase();
         onCreateGraph();
+        Log.i(TAG, " <--- init end STATS ----");
     }
 
     private void setTransitionAnimation(){
+        Log.i(TAG, "init Transition STATS start ---->");
         if (Build.VERSION.SDK_INT > 20){
             Slide slide = new Slide();
             slide.setSlideEdge(Gravity.BOTTOM);
@@ -82,6 +87,7 @@ public class StatisticsActivity extends AppCompatActivity {
             getWindow().setExitTransition(slide);
             getWindow().setEnterTransition(slide);
         }
+        Log.i(TAG, "<--- init Transition STATS end ----");
     }
 
     public void goBackToMainActivity(View view){
@@ -98,16 +104,20 @@ public class StatisticsActivity extends AppCompatActivity {
 
     // Graph
     private void onDraw(List<DistcovidModelObject> modelObjects){
+        Log.i(TAG, "onDraw Entry: STATS ----");
         // add the value to draw the origin axis
         entries.add(new Entry(0.0f, 0.0f));
         xaxis.add("0");
 
         // check if the list not null to avoid app crash
-        if(modelObjects != null && modelObjects.size() > 0){
-            for (int i = 0; i < modelObjects.size(); i++){
-                entries.add(new Entry((float) (i+1), Double.valueOf(modelObjects.get(i).getDistance()).floatValue()));
+        if(modelObjects != null && modelObjects.size() > 0) {
+            Log.i(TAG, "--- Object is not null STATS ----");
+            for (int i = 0; i < modelObjects.size(); i++) {
+                entries.add(new Entry((float) (i + 1), Double.valueOf(modelObjects.get(i).getDistance()).floatValue()));
                 xaxis.add(modelObjects.get(i).getFormattedDate());
             }
+        }else{Log.i(TAG, "--- onDraw object is null STATS ----");}
+        Log.i(TAG, "--- onDraw : config graph ----");
             lineDataSet = new LineDataSet(entries, "Closest Distance (in meter)"); // Legend
             onConfigLineDataSet(lineDataSet);
 
@@ -133,70 +143,77 @@ public class StatisticsActivity extends AppCompatActivity {
 
             setGraphViewPort();
             graph.animateXY(1200, 2200);
-        }
+        //}
+        Log.i(TAG, "Leaving onDraw STATS ----");
     }
 
-    private void onUpdateGraph(DistcovidModelObject modelObject){
-        if(graph.getData() != null && graph.getData().getEntryCount() > 0){
-            Log.i(TAG, "Number of ENTRY: " + graph.getData().getEntryCount());
-            entries.add(new Entry((float) graph.getData().getEntryCount() + 1, Double.valueOf(modelObject.getDistance()).floatValue()));
-            xaxis.add(modelObject.getFormattedDate());
-            if(modelObject.getDistance() < currentClosestDist){
-                //msg_tv.setText(String.valueOf(modelObject.getDistance()));
-                //date_tv.setText(warning.getDate());
-                //hour_tv.setText(warning.getTime());
-
+//    private void onUpdateGraph(DistcovidModelObject modelObject){
+//        if(graph.getData() != null && graph.getData().getEntryCount() > 0){
+//            Log.i(TAG, "Number of ENTRY: " + graph.getData().getEntryCount());
+//            entries.add(new Entry((float) graph.getData().getEntryCount() + 1, Double.valueOf(modelObject.getDistance()).floatValue()));
+//            xaxis.add(modelObject.getFormattedDate());
+//            if(modelObject.getDistance() < currentClosestDist){
+//                //msg_tv.setText(String.valueOf(modelObject.getDistance()));
+//                //date_tv.setText(warning.getDate());
+//                //hour_tv.setText(warning.getTime());
+//
 //                if (Build.VERSION.SDK_INT >=26){
 //                    vibrator.vibrate(VibrationEffect
 //                            .createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
 //                }
-            }
-            lineDataSet.setValues(entries);
+//            }
+//            lineDataSet.setValues(entries);
+//
+//            setGraphViewPort(); // actualize Viewport
+//
+//            graph.getData().notifyDataChanged();
+//            graph.notifyDataSetChanged();
+//
+//            graph.animateY(1200);
+//            //graph.animate();
+//            graph.moveViewToX(4);
+//
+//
+//        }
+//    }
 
-            setGraphViewPort(); // actualize Viewport
-
-            graph.getData().notifyDataChanged();
-            graph.notifyDataSetChanged();
-
-            graph.animateY(1200);
-            //graph.animate();
-            graph.moveViewToX(4);
-
-
-        }
-    }
-
-    private void onWriting(double distance){
-
-        long datetime = System.currentTimeMillis();
-        dbHelper.insertValue(distance, datetime);
-        Log.d(TAG, "Value: ( "+distance+" ) saved in the DB");
-
-        DistcovidModelObject warning = new DistcovidModelObject(distance, datetime);
-        warning.setFormattedDate(sdf.format(new Date(datetime)));
-        warning.setFormattedTime(sdf_time.format(new Date(datetime)));
-
-        onUpdateGraph(warning);
-    }
+//    private void onWriting(double distance){
+//
+//        long datetime = System.currentTimeMillis();
+//        dbHelper.insertValue(distance, datetime);
+//        Log.d(TAG, "Value: ( "+distance+" ) saved in the DB");
+//
+//        DistcovidModelObject warning = new DistcovidModelObject(distance, datetime);
+//        warning.setFormattedDate(sdf.format(new Date(datetime)));
+//        warning.setFormattedTime(sdf_time.format(new Date(datetime)));
+//
+//        //onUpdateGraph(warning);
+//    }
 
     private List<DistcovidModelObject> onRead(){
+        Log.i(TAG, "-- Entry onRead---- ");
         List<DistcovidModelObject> warningList = manager.groupDailyDistance(dbHelper.getWarnings());
 
         if (warningList != null){
+            Log.i(TAG, "--- warning is not != null: ");
             DistcovidModelObject w = manager.getClosestDistance(warningList);
-
+            Log.i(TAG, "CONTENT of w: ["+w+"]");
             currentClosestDist = w.getDistance();
 
 //            msg_tv.setText(String.valueOf(w.getValue()));
 //            date_tv.setText(w.getDate());
 //            hour_tv.setText(w.getTime());
 
-            Log.d(TAG, "LIST CONTENT: "+warningList);
+            Log.i(TAG, "LIST CONTENT: "+warningList);
 
             for (DistcovidModelObject war: warningList) {
-                Log.d(TAG, "id: " + war.get_id() + "  Value: " + war.getDistance() + " Date: " + war.getFormattedDate() + "  Time: " + war.getFormattedTime());
+                Log.i(TAG, "id: " + war.get_id() + "  Value: " + war.getDistance() + " Date: " + war.getFormattedDate() + "  Time: " + war.getFormattedTime());
             }
+        }else{
+            warningList = new ArrayList<>();
+            Log.i(TAG, "LIST CONTENT IST NULL: ["+warningList+"], size: "+warningList.size());
         }
+        Log.i(TAG, "--- onRead end ---");
         return warningList;
     }
 

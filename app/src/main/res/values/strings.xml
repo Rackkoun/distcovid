@@ -15,4 +15,10 @@
     <string name="show_warning_statistics">show warning statistics</string>
     <string name="stats_title">Closest devices with longer periode</string>
     <string name="go_back_to_main_screen">Go back to Main screen</string>
+    <string name="most_closest_devices_in_meter">Most closest devices (in meter):</string>
+    <string name="first">First:</string>
+    <string name="next">Next:</string>
+    <string name="third">Third:</string>
+    <string name="time_init_value">--:--:--</string>
+    <string name="date_init_value">yyyy-MM-dd</string>
 </resources>
