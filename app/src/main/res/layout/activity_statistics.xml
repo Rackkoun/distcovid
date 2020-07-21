@@ -20,13 +20,17 @@
             android:textStyle="bold"
             android:textSize="20sp"
     />
+
+
     <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/chart_id"
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="325dp"
             android:layout_margin="15dp"
-            app:layout_constraintTop_toBottomOf="@id/title_stats_id"
+            app:layout_constraintTop_toBottomOf="@+id/title_stats_id"
             app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginStart="@dimen/margin_side_dimens"
+            android:layout_marginEnd="@dimen/margin_side_dimens"
     />
 
     <TextView
@@ -52,28 +56,6 @@
     />
 
     <TextView
-            android:id="@+id/second_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/next"
-            app:layout_constraintTop_toBottomOf="@id/first_id"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginStart="@dimen/margin_side_dimens"
-            android:layout_marginTop="@dimen/margin_top_bottom_dimens"
-    />
-
-    <TextView
-            android:id="@+id/third_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/third"
-            app:layout_constraintTop_toBottomOf="@id/second_id"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginStart="@dimen/margin_side_dimens"
-            android:layout_marginTop="@dimen/margin_top_bottom_dimens"
-    />
-
-    <TextView
             android:id="@+id/first_value_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -83,28 +65,6 @@
             android:layout_marginStart="@dimen/margin_between_dimens"
             android:layout_marginTop="@dimen/margin_top_bottom_dimens"
 
-    />
-
-    <TextView
-            android:id="@+id/second_value_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/dist_init_val"
-            app:layout_constraintTop_toBottomOf="@id/first_id"
-            app:layout_constraintLeft_toRightOf="@id/second_id"
-            android:layout_marginStart="@dimen/margin_between_dimens"
-            android:layout_marginTop="@dimen/margin_top_bottom_dimens"
-    />
-
-    <TextView
-            android:id="@+id/third_value_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/dist_init_val"
-            app:layout_constraintTop_toBottomOf="@id/second_id"
-            app:layout_constraintLeft_toRightOf="@id/third_id"
-            android:layout_marginStart="@dimen/margin_between_dimens"
-            android:layout_marginTop="@dimen/margin_top_bottom_dimens"
     />
 
     <!-- Date and Time -->
@@ -121,28 +81,6 @@
     />
 
     <TextView
-            android:id="@+id/second_date_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/date_init_value"
-            app:layout_constraintTop_toBottomOf="@id/first_id"
-            app:layout_constraintRight_toLeftOf="@id/second_time_id"
-            android:layout_marginEnd="@dimen/margin_side_dimens"
-            android:layout_marginTop="@dimen/margin_top_bottom_dimens"
-    />
-
-    <TextView
-            android:id="@+id/third_date_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/date_init_value"
-            app:layout_constraintTop_toBottomOf="@id/second_id"
-            app:layout_constraintRight_toLeftOf="@id/third_time_id"
-            android:layout_marginEnd="@dimen/margin_side_dimens"
-            android:layout_marginTop="@dimen/margin_top_bottom_dimens"
-    />
-
-    <TextView
             android:id="@+id/first_time_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -152,28 +90,6 @@
             android:layout_marginEnd="@dimen/margin_side_dimens"
             android:layout_marginTop="@dimen/margin_top_bottom_dimens"
 
-    />
-
-    <TextView
-            android:id="@+id/second_time_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/time_init_value"
-            app:layout_constraintTop_toBottomOf="@id/first_id"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginEnd="@dimen/margin_side_dimens"
-            android:layout_marginTop="@dimen/margin_top_bottom_dimens"
-    />
-
-    <TextView
-            android:id="@+id/third_time_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/time_init_value"
-            app:layout_constraintTop_toBottomOf="@id/second_id"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginEnd="@dimen/margin_side_dimens"
-            android:layout_marginTop="@dimen/margin_top_bottom_dimens"
     />
 
     <Button

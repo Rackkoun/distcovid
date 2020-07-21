@@ -12,6 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 // source spannable Text: https://stackoverflow.com/questions/16335178/different-font-size-of-strings-in-the-same-textview/16335416
 
     private static final String TAG = "MAIN_TAG";
-    //private static int detectionCountDown = 4;
+    private static int detectionCountDown = 15;
 
     @SuppressLint("SimpleDateFormat")
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -161,23 +162,49 @@ public class MainActivity extends AppCompatActivity {
                     double distance30 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 7);
                     double distance50 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 8);
                     if (device.getName() != null){
+                        Log.i(TAG, "<----- Start: Name: "+ device.getName()+" ---");
+                        Log.i(TAG, "count down before (1): ---- "+detectionCountDown+" ----");
                         deviceNameList.add(device.getName()+"  --  "+distance +" meter");
                         closestDevicesDistAccurate.add(distance);
+                        if (distance50 < 1.5){
+                            Log.i(TAG, "<----- insert value and notify: "+ distance50+" m---");
+                            insertDistance(distance50);
+                            vibrate();
+                            Log.i(TAG, "<----- Insert value leaved ---");
+                        }
+                        Log.i(TAG, "D: ["+distance+" m], signal ["+rssi+" dbm]");
+                        Log.i(TAG, "D2: ["+distance2+"], signal ["+rssi+" dbm]");
+                        Log.i(TAG, "D3: ["+distance3+"], signal ["+rssi+" dbm]");
+                        Log.i(TAG, "D4: ["+distance4+"], signal ["+rssi+" dbm]");
+                        Log.i(TAG, "D10: ["+distance10+"], signal ["+rssi+" dbm]");
+                        Log.i(TAG, "D15: ["+distance15+"], signal ["+rssi+" dbm]");
+                        Log.i(TAG, "D20: ["+distance20+"], signal ["+rssi+" dbm]");
+                        Log.i(TAG, "D25: ["+distance25+"], signal ["+rssi+" dbm]");
+                        Log.i(TAG, "D30: ["+distance30+"], signal ["+rssi+" dbm]");
+                        Log.i(TAG, "D50: ["+distance50+"], signal ["+rssi+" dbm]");
+                        detectionCountDown--;
+                        if(detectionCountDown == 0){
+                            Log.i(TAG, " re-init count down ---- "+detectionCountDown+" ----");
+                            detectionCountDown = 14;
+                            Log.i(TAG, "count down re-initialized---- "+detectionCountDown+" ----");
+                        }
+                        Log.i(TAG, "count down after (1): ---- "+detectionCountDown+" ----");
+                        Log.i(TAG, "Name: "+ device.getName()+" ---- END --->");
 
                     }else {
                         deviceNameList.add(device.getAddress()+"  --  "+distance +" meter");
                         closestDevicesDistAccurate.add(distance);
                     }
-                    Log.i(TAG, "D: ["+distance+" m], signal ["+rssi+" dbm]");
-                    Log.i(TAG, "D2: ["+distance2+"], signal ["+rssi+" dbm]");
-                    Log.i(TAG, "D3: ["+distance3+"], signal ["+rssi+" dbm]");
-                    Log.i(TAG, "D4: ["+distance4+"], signal ["+rssi+" dbm]");
-                    Log.i(TAG, "D10: ["+distance10+"], signal ["+rssi+" dbm]");
-                    Log.i(TAG, "D15: ["+distance15+"], signal ["+rssi+" dbm]");
-                    Log.i(TAG, "D20: ["+distance20+"], signal ["+rssi+" dbm]");
-                    Log.i(TAG, "D25: ["+distance25+"], signal ["+rssi+" dbm]");
-                    Log.i(TAG, "D30: ["+distance30+"], signal ["+rssi+" dbm]");
-                    Log.i(TAG, "D50: ["+distance50+"], signal ["+rssi+" dbm]");
+//                    Log.i(TAG, "D: ["+distance+" m], signal ["+rssi+" dbm]");
+//                    Log.i(TAG, "D2: ["+distance2+"], signal ["+rssi+" dbm]");
+//                    Log.i(TAG, "D3: ["+distance3+"], signal ["+rssi+" dbm]");
+//                    Log.i(TAG, "D4: ["+distance4+"], signal ["+rssi+" dbm]");
+//                    Log.i(TAG, "D10: ["+distance10+"], signal ["+rssi+" dbm]");
+//                    Log.i(TAG, "D15: ["+distance15+"], signal ["+rssi+" dbm]");
+//                    Log.i(TAG, "D20: ["+distance20+"], signal ["+rssi+" dbm]");
+//                    Log.i(TAG, "D25: ["+distance25+"], signal ["+rssi+" dbm]");
+//                    Log.i(TAG, "D30: ["+distance30+"], signal ["+rssi+" dbm]");
+//                    Log.i(TAG, "D50: ["+distance50+"], signal ["+rssi+" dbm]");
 
                     Log.i(TAG, "Device: Name: ["+device.getName()+" - - "+device.getAddress()+"]");
                     bluetoothDeviceList.add(device);
@@ -208,7 +235,8 @@ public class MainActivity extends AppCompatActivity {
                         double distance50 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 8);
 
                         if (device.getName() != null){
-                            Log.i(TAG, "Name: "+ device.getName());
+                            Log.i(TAG, "<----- Start: Name: "+ device.getName()+" ---");
+                            Log.i(TAG, "count down before (2): ---- "+detectionCountDown+" ----");
                             deviceNameList.add(device.getName()+"  --  "+distance +" meter");
                             closestDevicesDistAccurate.add(distance);
                             Log.i(TAG, "D: ["+distance+" m], signal ["+rssi+" dbm]");
@@ -221,20 +249,35 @@ public class MainActivity extends AppCompatActivity {
                             Log.i(TAG, "D25: ["+distance25+"], signal ["+rssi+" dbm]");
                             Log.i(TAG, "D30: ["+distance30+"], signal ["+rssi+" dbm]");
                             Log.i(TAG, "D50: ["+distance50+"], signal ["+rssi+" dbm]");
+
+                            if (distance50 < 1.5){
+                                Log.i(TAG, "<----- insert value and notify: "+ distance50+" m---");
+                                insertDistance(distance50);
+                                vibrate();
+                                Log.i(TAG, "<----- Insert value leaved ---");
+                            }
+                            detectionCountDown--;
+                            if(detectionCountDown == 0){
+                                Log.i(TAG, " re-init count down ---- "+detectionCountDown+" ----");
+                                detectionCountDown = 14;
+                                Log.i(TAG, "count down re-initialized---- "+detectionCountDown+" ----");
+                            }
+                            Log.i(TAG, "count down after (2): ---- "+detectionCountDown+" ----");
+                            Log.i(TAG, "Name: "+ device.getName()+" ---- END --->");
                         }else {
                             deviceNameList.add(device.getAddress()+"  --  "+distance +" meter");
                             closestDevicesDistAccurate.add(distance);
                         }
-                        Log.i(TAG, "D: ["+distance+" m], signal ["+rssi+" dbm]");
-                        Log.i(TAG, "D2: ["+distance2+"], signal ["+rssi+" dbm]");
-                        Log.i(TAG, "D3: ["+distance3+"], signal ["+rssi+" dbm]");
-                        Log.i(TAG, "D4: ["+distance4+"], signal ["+rssi+" dbm]");
-                        Log.i(TAG, "D10: ["+distance10+"], signal ["+rssi+" dbm]");
-                        Log.i(TAG, "D15: ["+distance15+"], signal ["+rssi+" dbm]");
-                        Log.i(TAG, "D20: ["+distance20+"], signal ["+rssi+" dbm]");
-                        Log.i(TAG, "D25: ["+distance25+"], signal ["+rssi+" dbm]");
-                        Log.i(TAG, "D30: ["+distance30+"], signal ["+rssi+" dbm]");
-                        Log.i(TAG, "D50: ["+distance50+"], signal ["+rssi+" dbm]");
+//                        Log.i(TAG, "D: ["+distance+" m], signal ["+rssi+" dbm]");
+//                        Log.i(TAG, "D2: ["+distance2+"], signal ["+rssi+" dbm]");
+//                        Log.i(TAG, "D3: ["+distance3+"], signal ["+rssi+" dbm]");
+//                        Log.i(TAG, "D4: ["+distance4+"], signal ["+rssi+" dbm]");
+//                        Log.i(TAG, "D10: ["+distance10+"], signal ["+rssi+" dbm]");
+//                        Log.i(TAG, "D15: ["+distance15+"], signal ["+rssi+" dbm]");
+//                        Log.i(TAG, "D20: ["+distance20+"], signal ["+rssi+" dbm]");
+//                        Log.i(TAG, "D25: ["+distance25+"], signal ["+rssi+" dbm]");
+//                        Log.i(TAG, "D30: ["+distance30+"], signal ["+rssi+" dbm]");
+//                        Log.i(TAG, "D50: ["+distance50+"], signal ["+rssi+" dbm]");
                         Log.i(TAG, "size of double list: ["+closestDevicesDistAccurate.size()+"]");
 
                         sortDistance(closestDevicesDistAccurate);
@@ -425,6 +468,9 @@ public class MainActivity extends AppCompatActivity {
 
         long datetime = System.currentTimeMillis();
         dbHelper.insertValue(distance, datetime);
+        database.endTransaction();
+        database.close();
+        dbHelper.close();
         Log.d(TAG, "Value: ( "+distance+" ) saved in the DB");
 
         DistcovidModelObject warning = new DistcovidModelObject(distance, datetime);
@@ -432,5 +478,12 @@ public class MainActivity extends AppCompatActivity {
         warning.setFormattedTime(sdf_time.format(new Date(datetime)));
 
         //onUpdateGraph(warning);
+    }
+
+    private void vibrate(){
+        if (Build.VERSION.SDK_INT >=26){
+            vibrator.vibrate(VibrationEffect
+                    .createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+        }
     }
 }
