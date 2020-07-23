@@ -34,25 +34,15 @@
     />
 
     <TextView
-            android:id="@+id/current_closest_text_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/chart_id"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:text="@string/most_closest_devices_in_meter"
-            android:layout_marginStart="@dimen/margin_side_dimens"
-            android:layout_marginTop="@dimen/margin_top_bottom_dimens"
-    />
-
-    <TextView
             android:id="@+id/first_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/first"
-            app:layout_constraintTop_toBottomOf="@id/current_closest_text_id"
+            app:layout_constraintTop_toBottomOf="@id/chart_id"
             app:layout_constraintLeft_toLeftOf="parent"
+            android:textStyle="bold"
             android:layout_marginStart="@dimen/margin_side_dimens"
-            android:layout_marginTop="@dimen/margin_top_bottom_dimens"
+            android:layout_marginTop="@dimen/margin_side_dimens"
     />
 
     <TextView
@@ -60,22 +50,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/dist_init_val"
-            app:layout_constraintTop_toBottomOf="@id/current_closest_text_id"
+            app:layout_constraintTop_toBottomOf="@id/chart_id"
             app:layout_constraintLeft_toRightOf="@id/first_id"
             android:layout_marginStart="@dimen/margin_between_dimens"
-            android:layout_marginTop="@dimen/margin_top_bottom_dimens"
+            android:layout_marginTop="@dimen/margin_side_dimens"
 
     />
 
     <!-- Date and Time -->
+
+    <TextView
+            android:id="@+id/detected_on_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/first_id"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginStart="@dimen/margin_side_dimens"
+            android:layout_marginTop="@dimen/margin_top_bottom_dimens"
+            android:text="@string/detected_on"
+            android:textStyle="bold"
+    />
+
     <TextView
             android:id="@+id/first_date_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/date_init_value"
-            app:layout_constraintTop_toBottomOf="@id/current_closest_text_id"
-            app:layout_constraintRight_toLeftOf="@id/first_time_id"
-            android:layout_marginEnd="@dimen/margin_side_dimens"
+            app:layout_constraintTop_toBottomOf="@id/first_id"
+            app:layout_constraintLeft_toRightOf="@id/detected_on_id"
+            android:layout_marginStart="@dimen/margin_between_dimens"
             android:layout_marginTop="@dimen/margin_top_bottom_dimens"
 
     />
@@ -85,9 +88,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/time_init_value"
-            app:layout_constraintTop_toBottomOf="@id/current_closest_text_id"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginEnd="@dimen/margin_side_dimens"
+            app:layout_constraintTop_toBottomOf="@id/first_value_id"
+            app:layout_constraintLeft_toRightOf="@id/first_date_id"
+            android:layout_marginStart="@dimen/margin_side_dimens"
             android:layout_marginTop="@dimen/margin_top_bottom_dimens"
 
     />

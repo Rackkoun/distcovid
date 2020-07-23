@@ -80,10 +80,20 @@ public class StatsDataDB extends SQLiteOpenHelper {
 
             long id = db.insert(WARNING_TABLE, null, values);
             db.setTransactionSuccessful();
+
+            Log.i(TAG, "transaction successful! --");
             Log.i(TAG, "Values ("+
             id+", "+distance+", " +", "+ datetime+", ): successfully inserted");
         }catch (Exception e){
             Log.i(TAG, "Error while inserting values");
+        }
+        finally {
+            Log.i(TAG, "Ending transaction");
+            db.endTransaction();
+            Log.i(TAG, "Ending transaction: OK");
+            Log.i(TAG, "Closing DB");
+            db.close();
+            Log.i(TAG, "Closing DB: OK");
         }
     }
 
@@ -92,25 +102,42 @@ public class StatsDataDB extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         List<DistcovidModelObject> warnings = new ArrayList<>();
 
+        db.beginTransaction();
         Cursor cursor = db.query(WARNING_TABLE,
                 null, null, null,
                 null, null, null);
-        if (cursor.moveToFirst()){
-            Log.i(TAG, "Cursor is moved to first elements");
-            do {
-                long id = cursor.getLong(0);
-                double distance = cursor.getDouble(1);
-                //int during = cursor.getInt(2);
-                long datetime = cursor.getLong(2);
+        try {
+            Log.i(TAG, "Beginning transaction: Write");
+            if (cursor.moveToFirst()){
+                Log.i(TAG, "Cursor is moved to first elements");
+                do {
+                    long id = cursor.getLong(0);
+                    double distance = cursor.getDouble(1);
+                    //int during = cursor.getInt(2);
+                    long datetime = cursor.getLong(2);
 
-                DistcovidModelObject modelObject = new DistcovidModelObject(distance, datetime);
-                modelObject.set_id(id);
-                Log.i(TAG, "Object got:\n"+modelObject.toString());
-                warnings.add(modelObject);
-            }while (cursor.moveToNext());
+                    DistcovidModelObject modelObject = new DistcovidModelObject(distance, datetime);
+                    modelObject.set_id(id);
+                    Log.i(TAG, "Object got:\n"+modelObject.toString());
+                    warnings.add(modelObject);
+                }while (cursor.moveToNext());
 
+            }
+        }catch (Exception e){
+            Log.i(TAG, "Error [Write]: "+e.getMessage());
+        }finally {
+            Log.i(TAG, "Closing cursor");
+            cursor.close(); // very important
+            Log.i(TAG, "Closing cursor: OK");
+            Log.i(TAG, "Ending transaction");
+            db.endTransaction();
+            Log.i(TAG, "Ending transaction: OK");
+            Log.i(TAG, "Closing DB");
+            db.close();
+            Log.i(TAG, "Closing DB: OK");
         }
-        cursor.close(); // very important
+
+
         return warnings;
     }
 }

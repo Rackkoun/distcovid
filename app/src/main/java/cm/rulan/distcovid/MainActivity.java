@@ -2,6 +2,9 @@ package cm.rulan.distcovid;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -12,8 +15,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
@@ -24,6 +25,7 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import cm.rulan.distcovid.database.StatsDataDB;
 import cm.rulan.distcovid.measurements.BluetoothDistanceMeasurement;
 import cm.rulan.distcovid.model.DistcovidModelObject;
@@ -54,12 +56,10 @@ public class MainActivity extends AppCompatActivity {
     private List<BluetoothDevice> bluetoothDeviceList;
     private ArrayAdapter<String> deviceNameList;
 
-    private List<Double> closestDevicesDistAccurate;
-    private List<Double> closestDevicesDist;
+    private List<Double> closestDevicesList;
+
     private BluetoothAdapter bluetoothAdapter = null;
 
-    // alarming user through phone vibration
-    Vibrator vibrator;
     private StatsDataDB dbHelper;
     private SQLiteDatabase database;
 
@@ -83,12 +83,10 @@ public class MainActivity extends AppCompatActivity {
         scanSwitch = findViewById(R.id.scan_start_stop_id);
 
         bluetoothDeviceList = new ArrayList<>();
-        closestDevicesDist = new ArrayList<>();
-        closestDevicesDistAccurate = new ArrayList<>();
+        closestDevicesList = new ArrayList<>();
         deviceNameList = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         dbHelper = new StatsDataDB(this);
         database = dbHelper.getWritableDatabase();
@@ -195,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "ACTION: [" + action + "]");
                 deviceNameList.clear();
                 bluetoothDeviceList.clear();
-                closestDevicesDistAccurate.clear();
+                closestDevicesList.clear();
                 numberOfDectectedDevices.setText(getResources().getText(R.string.init_value_devices_found));
                 deviceNameList.notifyDataSetChanged();
                 bluetoothAdapter.startDiscovery();
@@ -213,8 +211,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void resetMemberVariables() {
-        closestDevicesDistAccurate.clear();
-        closestDevicesDist.clear();
+        closestDevicesList.clear();
         bluetoothDeviceList.clear();
         deviceNameList.clear();
         String second = 0 + " " + "meter";
@@ -232,13 +229,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    if (!bluetoothAdapter.isEnabled()) { //
+                    if (!bluetoothSwitch.isChecked() || bluetoothSwitch.isActivated()) { //
                         Toast.makeText(MainActivity.this, "Bluetooth is not enabled", Toast.LENGTH_SHORT).show();
                         Log.i(TAG, "BT is not enabled");// Make BT discoverable
                         scanSwitch.setText(R.string.scan_devices_default);
+                        scanSwitch.setChecked(false);
+                        scanSwitch.setActivated(false);
                         Log.i(TAG, "bt on off: " + bluetoothSwitch.isActivated() + ", checked: " + bluetoothSwitch.isChecked());
                     } else {
                         scanSwitch.setText(R.string.scan_devices_default1);
+                        Toast.makeText(MainActivity.this, "Discovering is activated", Toast.LENGTH_SHORT).show();
                         if (bluetoothAdapter.isDiscovering()) {
                             //resetMemberVariables();
                             deviceNameList.clear();
@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
                             deviceNameList.clear();
                             bluetoothDeviceList.clear();
                             deviceNameList.notifyDataSetChanged();
-                            closestDevicesDistAccurate.clear();
+                            closestDevicesList.clear();
                             IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                             MainActivity.this.registerReceiver(broadcastReceiver, intentFilter);
 
@@ -360,26 +360,23 @@ public class MainActivity extends AppCompatActivity {
 
     // add new value to the DB
     private void insertDistance(double distance) {
-
+        Log.i(TAG, "Entry in insertDistance: [MainActivity]");
         long datetime = System.currentTimeMillis();
+        Log.i(TAG, "Starting insertion: [MainActivity]");
         dbHelper.insertValue(distance, datetime);
-        database.endTransaction();
-        database.close();
+        Log.i(TAG, "Insertion Successful");
+        //database.endTransaction();
+        //database.close();
+        Log.i(TAG, "Closing DBHelper");
         dbHelper.close();
+        Log.i(TAG, "DBHelper closed successfully");
         Log.d(TAG, "Value: ( " + distance + " ) saved in the DB");
 
         DistcovidModelObject warning = new DistcovidModelObject(distance, datetime);
         warning.setFormattedDate(sdf.format(new Date(datetime)));
         warning.setFormattedTime(sdf_time.format(new Date(datetime)));
-
+        Log.i(TAG, "Exiting insertDistance [MainActivity]");
         //onUpdateGraph(warning);
-    }
-
-    private void vibrate() {
-        if (Build.VERSION.SDK_INT >= 20) {
-            vibrator.vibrate(VibrationEffect
-                    .createOneShot(550, VibrationEffect.DEFAULT_AMPLITUDE));
-        }
     }
 
     private void estimateSignalStrength(short rssi) {
@@ -391,30 +388,37 @@ public class MainActivity extends AppCompatActivity {
         if (((rssi >= -62) && (rssi <= -48))) {
             double distance = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 3);
 
-            closestDevicesDistAccurate.add(distance);
-            Collections.sort(closestDevicesDistAccurate);
-            estimation = "High signal approx in " + closestDevicesDistAccurate.get(0) + " meter";
+            closestDevicesList.add(distance);
+            Collections.sort(closestDevicesList);
+            estimation = "High signal approx in " + closestDevicesList.get(0) + " meter";
 
             String second = 0 + " " + "meter";
-            if (closestDevicesDistAccurate.size() > 1) {
-                second = closestDevicesDistAccurate.get(1) + " " + "meter";
+            if (closestDevicesList.size() > 1) {
+                second = closestDevicesList.get(1) + " " + "meter";
             }
             reformatTextSize(estimation);
             nextClosestDeviceDistance.setText(second);
 
-            Log.i(TAG, " size of list for next device: ---- " + closestDevicesDistAccurate.size() + " ----");
+            Log.i(TAG, " size of list for next device: ---- " + closestDevicesList.size() + " ----");
             insertDistance(distance);
-            vibrate(); // vibrate and then update view
+            Log.i(TAG, "Starting vibration [estimateDistance]");
+            // vibrate, notify and then update view
+            //vibrate();
+            Log.i(TAG, "Ending vibration [estimateDistance]");
+            Log.i(TAG, "Starting alert");
+            alertUser(estimation);
+            Log.i(TAG, "Alert ended");
+
         } else if (((rssi >= -82) && (rssi <= -68))) {
             double distance = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 3);
-            closestDevicesDistAccurate.add(distance);
-            Collections.sort(closestDevicesDistAccurate);
+            closestDevicesList.add(distance);
+            Collections.sort(closestDevicesList);
 
-            estimation = "Low signal approx in " + closestDevicesDistAccurate.get(0) + " meter";
+            estimation = "Low signal approx in " + closestDevicesList.get(0) + " meter";
             //updateViews(closestDevicesDistAccurate);
             String second = 0 + " " + "meter";
-            if (closestDevicesDistAccurate.size() > 1) {
-                second = closestDevicesDistAccurate.get(1) + " " + "meter";
+            if (closestDevicesList.size() > 1) {
+                second = closestDevicesList.get(1) + " " + "meter";
             }
             reformatTextSize(estimation);
             nextClosestDeviceDistance.setText(second);
@@ -425,5 +429,49 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Log.i(TAG, "Estimation ended <-------");
+    }
+
+    // Push notification
+    private void alertUser(String message){
+        Log.i(TAG, "--- Notification called---");
+        Intent intent = new Intent(this, StatisticsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+
+        Log.i(TAG, "Config Notification--- ");
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
+
+        Notification notification = new Notification();
+        notification.defaults |= Notification.DEFAULT_SOUND;
+        notification.defaults |= Notification.DEFAULT_VIBRATE;
+
+        notificationBuilder.setDefaults(notification.defaults);
+        notificationBuilder.setContentTitle("Alert: Someone is very close to you ")
+                    .setContentText(message)
+                .setAutoCancel(true)
+                    .setSmallIcon(R.mipmap.distcovid_launcher_round)
+                    .setContentIntent(pendingIntent);
+        Log.i(TAG, "Config Notification finish --- ");
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if(notificationManager != null){
+            Log.i(TAG, "Manager is not null");
+            notificationManager.notify(0, notificationBuilder.build());
+        }else{
+            Log.i(TAG, "Manager is null");
+        }
+        //if (notificationManager != null){
+           // Log.i(TAG, "--- Notification manager is not null ---");
+//            Notification notification = new Notification();
+//
+//
+//            notification.flags |= Notification.FLAG_AUTO_CANCEL;
+//
+//            notificationManager.notify(0, notification);
+       // }else {
+        //    Log.i(TAG, "--- Notification manager is null ---");
+        //}
+        Log.i(TAG, "--- Notification call ended ---");
     }
 }

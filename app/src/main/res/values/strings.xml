@@ -22,4 +22,5 @@
     <string name="time_init_value">--:--:--</string>
     <string name="date_init_value">yyyy-MM-dd</string>
     <string name="default_pulse_msg">High signal approx in 0 meter</string>
+    <string name="detected_on">Detected on:</string>
 </resources>

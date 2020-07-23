@@ -137,4 +137,8 @@ dependencies {
 
     // MPAndroidChart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+
+    // Android notification
+    implementation "com.android.support:support-compat:29.0.0"
+
 }
