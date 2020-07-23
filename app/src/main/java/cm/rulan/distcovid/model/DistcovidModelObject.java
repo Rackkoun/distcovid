@@ -2,8 +2,8 @@ package cm.rulan.distcovid.model;
 
 public class DistcovidModelObject implements java.lang.Comparable<DistcovidModelObject>{
     private long _id;
-    private double distance;
-    private long datetime;
+    private final double distance;
+    private final long datetime;
 
     // for formatting
     private String formattedDate;
@@ -27,16 +27,8 @@ public class DistcovidModelObject implements java.lang.Comparable<DistcovidModel
         return distance;
     }
 
-    public void setDistance(double distance) {
-        this.distance = distance;
-    }
-
     public long getDatetime() {
         return datetime;
-    }
-
-    public void setDatetime(long datetime) {
-        this.datetime = datetime;
     }
 
     public String getFormattedDate() {

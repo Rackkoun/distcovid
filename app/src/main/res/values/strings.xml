@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">distcovid</string>
     <string name="launch_scan">LAUNCH SCAN</string>
-    <string name="number_of_devices_found">Number of devices found:</string>
+    <string name="number_of_devices_found">Devices found:</string>
     <string name="init_value_devices_found">0</string>
     <string name="text_on">On</string>
     <string name="text_off">Off</string>
@@ -11,7 +11,7 @@
     <string name="bluetooth_default1">Bluetooth On</string>
     <string name="dist_init_val">0 meter</string>
     <string name="main_view_title">Closest device (in meter)</string>
-    <string name="next_closest_device_str">Next device:</string>
+    <string name="next_closest_device_str">Next device in:</string>
     <string name="show_warning_statistics">show warning statistics</string>
     <string name="stats_title">Closest devices with longer periode</string>
     <string name="go_back_to_main_screen">Go back to Main screen</string>

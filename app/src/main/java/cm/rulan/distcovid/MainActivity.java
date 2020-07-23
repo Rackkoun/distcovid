@@ -68,9 +68,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initViews();
-        setTransitionAnimation();
-        setViewComponents();
+        initViews(); // initialize views
+        setTransitionAnimation(); // set animation
+        setViewComponents(); // set event listener to switch buttons
     }
 
     private void initViews() {
@@ -88,77 +88,58 @@ public class MainActivity extends AppCompatActivity {
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        dbHelper = new StatsDataDB(this);
+        dbHelper = new StatsDataDB(this); // initialize the DB-helper for database transaction
         database = dbHelper.getWritableDatabase();
     }
 
     private void bluetoothOnOff() {
-        bluetoothSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    // enable BT
-                    if (!bluetoothAdapter.isEnabled()) {
-                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                        bluetoothSwitch.setText(R.string.bluetooth_default1);
-                        //isChecked = true;
-                        bluetoothSwitch.setChecked(true);
-                        Log.i(TAG, "BT is enabled");
-                    }
-                    Log.i(TAG, "BT on: [" + isChecked + "]");
-                } else {
-                    Log.i(TAG, "Disable BT");
-                    bluetoothAdapter.disable();
-                    bluetoothSwitch.setText(R.string.bluetooth_default);
-                    bluetoothSwitch.setChecked(false);
-                    Log.i(TAG, "BT off: [" + isChecked + "]");
-                    bluetoothAdapter.cancelDiscovery();
-                    scanSwitch.setActivated(false);
-                    scanSwitch.setChecked(false);
+        // Enable and disable bluetooth when the check state is true
+        bluetoothSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                // enable BT
+                if (!bluetoothAdapter.isEnabled()) {
+                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                    bluetoothSwitch.setText(R.string.bluetooth_default1);
+
+                    bluetoothSwitch.setChecked(true);
+                    Log.i(TAG, "BT is enabled");
                 }
-                Log.i(TAG, "Text: [" + bluetoothSwitch.getText().toString() + "]");
-                Log.i(TAG, "Text: [" + bluetoothSwitch.getTextOn().toString() + "]");
-                Log.i(TAG, "Text: [" + bluetoothSwitch.getTextOff().toString() + "]");
-                Log.i(TAG, "Text: [" + bluetoothSwitch.isChecked() + "]");
-                Log.i(TAG, "Text: [" + bluetoothSwitch.isActivated() + "]");
+            } else {
+                Log.i(TAG, "Disable BT");
+                bluetoothAdapter.disable(); // bluetooth disabling here
+                bluetoothSwitch.setText(R.string.bluetooth_default);
+                bluetoothSwitch.setChecked(false);
+                bluetoothAdapter.cancelDiscovery();
+                scanSwitch.setActivated(false); // be sure to disable the switch button for device discovery
+                scanSwitch.setChecked(false);
             }
         });
     }
 
     private void setViewComponents() {
-        Log.i(TAG, "Set view components -- start");
+        // Set value for all views in the main screen
         bluetoothOnOff();
         launchScan();
         String pulseResource = getResources().getString(R.string.default_pulse_msg);
-        Log.i(TAG, "Content Pulse resource before: [" + pulseResource + "]");
         reformatTextSize(pulseResource);
-        Log.i(TAG, "Set view components -- end");
     }
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
+            String action = intent.getAction(); // get the bluetooth action
 
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                Log.i(TAG, "ACTION: [" + action + "]");
-                Log.i(TAG, "Discov status 1: [" + bluetoothAdapter.isDiscovering() + "]");
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                Log.i(TAG, "SIZE OF LIST: " + bluetoothDeviceList.size());
                 if (bluetoothDeviceList.size() < 1) {
-                    Log.i(TAG, "-- scan mode 1 --" + bluetoothAdapter.getScanMode() + "  scan state" + bluetoothAdapter.getState());
                     short rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
 
-                    if (device.getName() != null) {
-                        Log.i(TAG, "<----- Start: Name: " + device.getName() + " ---");
+                    if (device.getName() != null) {// the app will crash if the device name is null
                         deviceNameList.add(device.getName());
-                        Log.i(TAG, "Name: " + device.getName() + " ---- END --->");
-
-                        Log.i(TAG, "Device: Name: [" + device.getName() + " - - " + device.getAddress() + "]");
                         bluetoothDeviceList.add(device);
                         deviceNameList.notifyDataSetChanged();
-                        estimateSignalStrength(rssi);
+                        estimateSignalStrength(rssi); // estimate the device distance through its emitted signal
                         numberOfDectectedDevices.setText(String.valueOf(deviceNameList.getCount()));
                     }
 
@@ -170,41 +151,32 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
-                    if (!deviceIsInTheList) {
-                        Log.i(TAG, "------- Discov status 3: [" + bluetoothAdapter.isDiscovering() + "]");
-                        short rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
+                    if (!deviceIsInTheList) { // be sure to do not add the same device in the list more than one
+                        short rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE); // get signal strength
 
                         if (device.getName() != null) {
-                            Log.i(TAG, "<----- Start: Name: " + device.getName() + " ---");
                             deviceNameList.add(device.getName());
 
                             bluetoothDeviceList.add(device);
                             deviceNameList.notifyDataSetChanged();
                             estimateSignalStrength(rssi);
                             numberOfDectectedDevices.setText(String.valueOf(deviceNameList.getCount()));
-                            Log.i(TAG, "Name: " + device.getName() + " ---- END --->");
                         }
                     }
 
 
                 }// Restart discovering after it is finished
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                Log.i(TAG, "--- -- Get count -- " + deviceNameList.getCount());
-                Log.i(TAG, "ACTION: [" + action + "]");
                 deviceNameList.clear();
                 bluetoothDeviceList.clear();
                 closestDevicesList.clear();
                 numberOfDectectedDevices.setText(getResources().getText(R.string.init_value_devices_found));
                 deviceNameList.notifyDataSetChanged();
                 bluetoothAdapter.startDiscovery();
-                Log.i(TAG, "----- End ----: ");
-                if (!bluetoothAdapter.isDiscovering() && bluetoothAdapter.isEnabled()) {
-                    Log.i(TAG, "-- try to relaunch discovering");
 
+                if (!bluetoothAdapter.isDiscovering() && bluetoothAdapter.isEnabled()) {
                     IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                     MainActivity.this.registerReceiver(broadcastReceiver, intentFilter);
-                    Log.i(TAG, "-- try to relaunch discovering: End --");
-
                 }
             }
         }
@@ -224,58 +196,44 @@ public class MainActivity extends AppCompatActivity {
 
     private void launchScan() {
         Log.i(TAG, "Scanning...");
-
-        scanSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    if (!bluetoothSwitch.isChecked() || bluetoothSwitch.isActivated()) { //
-                        Toast.makeText(MainActivity.this, "Bluetooth is not enabled", Toast.LENGTH_SHORT).show();
-                        Log.i(TAG, "BT is not enabled");// Make BT discoverable
-                        scanSwitch.setText(R.string.scan_devices_default);
-                        scanSwitch.setChecked(false);
-                        scanSwitch.setActivated(false);
-                        Log.i(TAG, "bt on off: " + bluetoothSwitch.isActivated() + ", checked: " + bluetoothSwitch.isChecked());
-                    } else {
-                        scanSwitch.setText(R.string.scan_devices_default1);
-                        Toast.makeText(MainActivity.this, "Discovering is activated", Toast.LENGTH_SHORT).show();
-                        if (bluetoothAdapter.isDiscovering()) {
-                            //resetMemberVariables();
-                            deviceNameList.clear();
-                            bluetoothDeviceList.clear();
-                            deviceNameList.notifyDataSetChanged();
-                            Log.i(TAG, "discovering is canceled...");
-                        } else {
-                            Log.i(TAG, "-- Entry else: adapter cleared");
-                            bluetoothAdapter.startDiscovery();
-                            //resetMemberVariables();
-                            deviceNameList.clear();
-                            bluetoothDeviceList.clear();
-                            deviceNameList.notifyDataSetChanged();
-                            closestDevicesList.clear();
-                            IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-                            MainActivity.this.registerReceiver(broadcastReceiver, intentFilter);
-
-                            // action when discovery is finished
-                            intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-                            MainActivity.this.registerReceiver(broadcastReceiver, intentFilter);
-
-                            Log.i(TAG, "BT is discovering...");
-
-                            //deviceListView.setAdapter(arrayAdapter);
-                            numberOfDectectedDevices.setText(String.valueOf(deviceNameList.getCount()));
-                            //deviceNameList.notifyDataSetChanged();
-                            Log.i(TAG, "End of else--");
-                        }
-
-                    }
-                } else {
-                    Log.i(TAG, "Discovering stopped");
-                    bluetoothAdapter.cancelDiscovery();
+        scanSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                if (!bluetoothSwitch.isChecked() || bluetoothSwitch.isActivated()) { //
+                    Toast.makeText(MainActivity.this, "Bluetooth is not enabled", Toast.LENGTH_SHORT).show();
                     scanSwitch.setText(R.string.scan_devices_default);
                     scanSwitch.setChecked(false);
-                    resetMemberVariables();
+                    scanSwitch.setActivated(false);
+                } else {
+                    scanSwitch.setText(R.string.scan_devices_default1);
+                    Toast.makeText(MainActivity.this, "Discovering is activated", Toast.LENGTH_SHORT).show();
+                    if (bluetoothAdapter.isDiscovering()) {
+
+                        deviceNameList.clear();
+                        bluetoothDeviceList.clear();
+                        deviceNameList.notifyDataSetChanged();
+                    } else {
+                        bluetoothAdapter.startDiscovery();
+                        deviceNameList.clear();
+                        bluetoothDeviceList.clear();
+                        deviceNameList.notifyDataSetChanged();
+                        closestDevicesList.clear();
+                        IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+                        MainActivity.this.registerReceiver(broadcastReceiver, intentFilter);
+
+                        // notify the broadcast when the discovery is finished
+                        intentFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+                        MainActivity.this.registerReceiver(broadcastReceiver, intentFilter);
+
+                        numberOfDectectedDevices.setText(String.valueOf(deviceNameList.getCount()));
+                    }
+
                 }
+            } else {
+                Log.i(TAG, "Discovering stopped");
+                bluetoothAdapter.cancelDiscovery();
+                scanSwitch.setText(R.string.scan_devices_default);
+                scanSwitch.setChecked(false);
+                resetMemberVariables();
             }
         });
     }
@@ -287,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void reformatTextSize(String textPulseStr) {
-        Log.i(TAG, "-- Set String [" + textPulseStr + "] start --");
+        // Format the text to fit into the pulse animation
         String[] splitedText = textPulseStr.split(" ");
 
         SpannableStringBuilder stringBuilder = new SpannableStringBuilder(textPulseStr);
@@ -323,9 +281,6 @@ public class MainActivity extends AppCompatActivity {
                 textPulseStr.indexOf(splitedText[3]) + (splitedText[3].length() + 1), "\n");
 
         closestDeviceDistance.setText(stringBuilder);
-
-        Log.i(TAG, "Str builder after: " + stringBuilder);
-        Log.i(TAG, "Set String end ----");
     }
 
     private void setAnimationPulse() {
@@ -360,27 +315,19 @@ public class MainActivity extends AppCompatActivity {
 
     // add new value to the DB
     private void insertDistance(double distance) {
-        Log.i(TAG, "Entry in insertDistance: [MainActivity]");
+        // Insert the notified distance value to the DB
         long datetime = System.currentTimeMillis();
-        Log.i(TAG, "Starting insertion: [MainActivity]");
+
         dbHelper.insertValue(distance, datetime);
-        Log.i(TAG, "Insertion Successful");
-        //database.endTransaction();
-        //database.close();
-        Log.i(TAG, "Closing DBHelper");
         dbHelper.close();
-        Log.i(TAG, "DBHelper closed successfully");
         Log.d(TAG, "Value: ( " + distance + " ) saved in the DB");
 
         DistcovidModelObject warning = new DistcovidModelObject(distance, datetime);
         warning.setFormattedDate(sdf.format(new Date(datetime)));
         warning.setFormattedTime(sdf_time.format(new Date(datetime)));
-        Log.i(TAG, "Exiting insertDistance [MainActivity]");
-        //onUpdateGraph(warning);
     }
 
     private void estimateSignalStrength(short rssi) {
-        Log.i(TAG, "Estimation started ------->");
         // use the range n = 10
         // Low signal approx in distance meter
         String estimation;
@@ -400,14 +347,8 @@ public class MainActivity extends AppCompatActivity {
             nextClosestDeviceDistance.setText(second);
 
             Log.i(TAG, " size of list for next device: ---- " + closestDevicesList.size() + " ----");
-            insertDistance(distance);
-            Log.i(TAG, "Starting vibration [estimateDistance]");
-            // vibrate, notify and then update view
-            //vibrate();
-            Log.i(TAG, "Ending vibration [estimateDistance]");
-            Log.i(TAG, "Starting alert");
-            alertUser(estimation);
-            Log.i(TAG, "Alert ended");
+            insertDistance(distance); // insert value in the DB
+            alertUser(estimation); // then notify the user
 
         } else if (((rssi >= -82) && (rssi <= -68))) {
             double distance = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 3);
@@ -415,31 +356,27 @@ public class MainActivity extends AppCompatActivity {
             Collections.sort(closestDevicesList);
 
             estimation = "Low signal approx in " + closestDevicesList.get(0) + " meter";
-            //updateViews(closestDevicesDistAccurate);
             String second = 0 + " " + "meter";
+
             if (closestDevicesList.size() > 1) {
                 second = closestDevicesList.get(1) + " " + "meter";
             }
             reformatTextSize(estimation);
             nextClosestDeviceDistance.setText(second);
-            Log.i(TAG, "Estimation: " + estimation);
         } else {
             final double distance = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 3);
             Log.i(TAG, "Not to approximate: strength [" + rssi + " dbm] for distance [" + distance + " m]");
         }
-
-        Log.i(TAG, "Estimation ended <-------");
     }
 
     // Push notification
-    private void alertUser(String message){
-        Log.i(TAG, "--- Notification called---");
+    private void alertUser(String message) {
         Intent intent = new Intent(this, StatisticsActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
-        Log.i(TAG, "Config Notification--- ");
+        // Config Notification
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
 
         Notification notification = new Notification();
@@ -448,30 +385,16 @@ public class MainActivity extends AppCompatActivity {
 
         notificationBuilder.setDefaults(notification.defaults);
         notificationBuilder.setContentTitle("Alert: Someone is very close to you ")
-                    .setContentText(message)
+                .setContentText(message)
                 .setAutoCancel(true)
-                    .setSmallIcon(R.mipmap.distcovid_launcher_round)
-                    .setContentIntent(pendingIntent);
-        Log.i(TAG, "Config Notification finish --- ");
+                .setSmallIcon(R.mipmap.distcovid_launcher_round)
+                .setContentIntent(pendingIntent);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if(notificationManager != null){
-            Log.i(TAG, "Manager is not null");
+        if (notificationManager != null) {
             notificationManager.notify(0, notificationBuilder.build());
-        }else{
+        } else {
             Log.i(TAG, "Manager is null");
         }
-        //if (notificationManager != null){
-           // Log.i(TAG, "--- Notification manager is not null ---");
-//            Notification notification = new Notification();
-//
-//
-//            notification.flags |= Notification.FLAG_AUTO_CANCEL;
-//
-//            notificationManager.notify(0, notification);
-       // }else {
-        //    Log.i(TAG, "--- Notification manager is null ---");
-        //}
-        Log.i(TAG, "--- Notification call ended ---");
     }
 }

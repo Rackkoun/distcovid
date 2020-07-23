@@ -34,12 +34,10 @@ public class StatsDataDB extends SQLiteOpenHelper {
     public StatsDataDB(Context context){
 
         super(context, DBNAME, null, DBVERSION);
-        Log.i(TAG, "StatDB constructor leaved ---> ");
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.i(TAG, "--- onCreate DB: query start ---->");
         try {
             String sqlQuery = "CREATE TABLE "+ WARNING_TABLE +
                     "("+ _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -52,16 +50,13 @@ public class StatsDataDB extends SQLiteOpenHelper {
         }catch (Exception e){
             Log.i(TAG, "Error while creating der DB: "+ e.getMessage());
         }
-        Log.i(TAG, "--- onCreate DB query end ---->");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         try {
             db.execSQL(DROP_WARNING_TABLE);
-
             onCreate(db);
-            Log.d(TAG, "DB "+ getDatabaseName()+ " re-created");
         }catch (Exception e){
             Log.e(TAG, "Error while re-creating the DB: " + e.getMessage());
         }
@@ -75,25 +70,17 @@ public class StatsDataDB extends SQLiteOpenHelper {
         try {
             ContentValues values = new ContentValues();
             values.put(COLUMN_DISTANCE, distance);
-            //values.put(COLUMN_DURING, during);
             values.put(COLUMN_DATETIME, datetime);
 
             long id = db.insert(WARNING_TABLE, null, values);
             db.setTransactionSuccessful();
-
             Log.i(TAG, "transaction successful! --");
-            Log.i(TAG, "Values ("+
-            id+", "+distance+", " +", "+ datetime+", ): successfully inserted");
         }catch (Exception e){
             Log.i(TAG, "Error while inserting values");
         }
         finally {
-            Log.i(TAG, "Ending transaction");
             db.endTransaction();
-            Log.i(TAG, "Ending transaction: OK");
-            Log.i(TAG, "Closing DB");
             db.close();
-            Log.i(TAG, "Closing DB: OK");
         }
     }
 
@@ -107,13 +94,10 @@ public class StatsDataDB extends SQLiteOpenHelper {
                 null, null, null,
                 null, null, null);
         try {
-            Log.i(TAG, "Beginning transaction: Write");
             if (cursor.moveToFirst()){
-                Log.i(TAG, "Cursor is moved to first elements");
                 do {
                     long id = cursor.getLong(0);
                     double distance = cursor.getDouble(1);
-                    //int during = cursor.getInt(2);
                     long datetime = cursor.getLong(2);
 
                     DistcovidModelObject modelObject = new DistcovidModelObject(distance, datetime);
@@ -126,15 +110,9 @@ public class StatsDataDB extends SQLiteOpenHelper {
         }catch (Exception e){
             Log.i(TAG, "Error [Write]: "+e.getMessage());
         }finally {
-            Log.i(TAG, "Closing cursor");
             cursor.close(); // very important
-            Log.i(TAG, "Closing cursor: OK");
-            Log.i(TAG, "Ending transaction");
             db.endTransaction();
-            Log.i(TAG, "Ending transaction: OK");
-            Log.i(TAG, "Closing DB");
             db.close();
-            Log.i(TAG, "Closing DB: OK");
         }
 
 
