@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.core.content.ContextCompat;
@@ -57,6 +58,8 @@ public class StatisticsActivity extends AppCompatActivity {
 
     private Vibrator vibrator; // to alarm user through phone vibration
 
+    TextView value_tv, date_tv, time_tv;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +73,11 @@ public class StatisticsActivity extends AppCompatActivity {
     private void initViews(){
         Log.i(TAG, "--- init start STATS ---->");
         graph = findViewById(R.id.chart_id);
+
+        value_tv = findViewById(R.id.first_value_id);
+        date_tv = findViewById(R.id.first_date_id);
+        time_tv = findViewById(R.id.first_time_id);
+
         dbHelper = new StatsDataDB(this);
         Log.i(TAG, "--- DB initialized STATS ---->");
         database = dbHelper.getReadableDatabase();
@@ -147,49 +155,6 @@ public class StatisticsActivity extends AppCompatActivity {
         Log.i(TAG, "Leaving onDraw STATS ----");
     }
 
-//    private void onUpdateGraph(DistcovidModelObject modelObject){
-//        if(graph.getData() != null && graph.getData().getEntryCount() > 0){
-//            Log.i(TAG, "Number of ENTRY: " + graph.getData().getEntryCount());
-//            entries.add(new Entry((float) graph.getData().getEntryCount() + 1, Double.valueOf(modelObject.getDistance()).floatValue()));
-//            xaxis.add(modelObject.getFormattedDate());
-//            if(modelObject.getDistance() < currentClosestDist){
-//                //msg_tv.setText(String.valueOf(modelObject.getDistance()));
-//                //date_tv.setText(warning.getDate());
-//                //hour_tv.setText(warning.getTime());
-//
-//                if (Build.VERSION.SDK_INT >=26){
-//                    vibrator.vibrate(VibrationEffect
-//                            .createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
-//                }
-//            }
-//            lineDataSet.setValues(entries);
-//
-//            setGraphViewPort(); // actualize Viewport
-//
-//            graph.getData().notifyDataChanged();
-//            graph.notifyDataSetChanged();
-//
-//            graph.animateY(1200);
-//            //graph.animate();
-//            graph.moveViewToX(4);
-//
-//
-//        }
-//    }
-
-//    private void onWriting(double distance){
-//
-//        long datetime = System.currentTimeMillis();
-//        dbHelper.insertValue(distance, datetime);
-//        Log.d(TAG, "Value: ( "+distance+" ) saved in the DB");
-//
-//        DistcovidModelObject warning = new DistcovidModelObject(distance, datetime);
-//        warning.setFormattedDate(sdf.format(new Date(datetime)));
-//        warning.setFormattedTime(sdf_time.format(new Date(datetime)));
-//
-//        //onUpdateGraph(warning);
-//    }
-
     private List<DistcovidModelObject> onRead(){
         Log.i(TAG, "-- Entry onRead---- ");
         List<DistcovidModelObject> warningList = manager.groupDailyDistance(dbHelper.getWarnings());
@@ -200,9 +165,10 @@ public class StatisticsActivity extends AppCompatActivity {
             Log.i(TAG, "CONTENT of w: ["+w+"]");
             currentClosestDist = w.getDistance();
 
-//            msg_tv.setText(String.valueOf(w.getValue()));
-//            date_tv.setText(w.getDate());
-//            hour_tv.setText(w.getTime());
+            String distance = currentClosestDist +" meter";
+            value_tv.setText(distance);
+            date_tv.setText(w.getFormattedDate());
+            time_tv.setText(w.getFormattedTime());
 
             Log.i(TAG, "LIST CONTENT: "+warningList);
 
@@ -211,6 +177,13 @@ public class StatisticsActivity extends AppCompatActivity {
             }
         }else{
             warningList = new ArrayList<>();
+            final String distance = getResources().getString(R.string.dist_init_val);
+            final String date = getResources().getString(R.string.date_init_value);
+            final String time = getResources().getString(R.string.time_init_value);
+
+            value_tv.setText(distance);
+            date_tv.setText(date);
+            time_tv.setText(time);
             Log.i(TAG, "LIST CONTENT IST NULL: ["+warningList+"], size: "+warningList.size());
         }
         Log.i(TAG, "--- onRead end ---");

@@ -35,7 +35,7 @@
                 android:id="@+id/closest_dist_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/dist_init_val"
+                android:text="@string/default_pulse_msg"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:textColor="@color/text_white"

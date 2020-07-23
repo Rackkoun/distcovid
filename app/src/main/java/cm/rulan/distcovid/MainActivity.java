@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
 // source spannable Text: https://stackoverflow.com/questions/16335178/different-font-size-of-strings-in-the-same-textview/16335416
 
     private static final String TAG = "MAIN_TAG";
-    private static int detectionCountDown = 15;
 
     @SuppressLint("SimpleDateFormat")
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -71,9 +70,10 @@ public class MainActivity extends AppCompatActivity {
 
         initViews();
         setTransitionAnimation();
+        setViewComponents();
     }
 
-    private void initViews(){
+    private void initViews() {
         numberOfDectectedDevices = findViewById(R.id.number_of_devices_found_int_id);
         closestDeviceDistance = findViewById(R.id.closest_dist_id);
         nextClosestDeviceDistance = findViewById(R.id.next_closest_value_id);
@@ -94,13 +94,13 @@ public class MainActivity extends AppCompatActivity {
         database = dbHelper.getWritableDatabase();
     }
 
-    private void bluetoothOnOff(){
+    private void bluetoothOnOff() {
         bluetoothSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
+                if (isChecked) {
                     // enable BT
-                    if(!bluetoothAdapter.isEnabled()){
+                    if (!bluetoothAdapter.isEnabled()) {
                         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                         startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                         bluetoothSwitch.setText(R.string.bluetooth_default1);
@@ -108,34 +108,34 @@ public class MainActivity extends AppCompatActivity {
                         bluetoothSwitch.setChecked(true);
                         Log.i(TAG, "BT is enabled");
                     }
-                    Log.i(TAG, "BT on: ["+isChecked+"]");
-                }else{
+                    Log.i(TAG, "BT on: [" + isChecked + "]");
+                } else {
                     Log.i(TAG, "Disable BT");
                     bluetoothAdapter.disable();
                     bluetoothSwitch.setText(R.string.bluetooth_default);
                     bluetoothSwitch.setChecked(false);
-                    Log.i(TAG, "BT off: ["+isChecked+"]");
+                    Log.i(TAG, "BT off: [" + isChecked + "]");
                     bluetoothAdapter.cancelDiscovery();
                     scanSwitch.setActivated(false);
                     scanSwitch.setChecked(false);
                 }
-                Log.i(TAG, "Text: ["+bluetoothSwitch.getText().toString()+"]");
-                Log.i(TAG, "Text: ["+bluetoothSwitch.getTextOn().toString()+"]");
-                Log.i(TAG, "Text: ["+bluetoothSwitch.getTextOff().toString()+"]");
-                Log.i(TAG, "Text: ["+bluetoothSwitch.isChecked()+"]");
-                Log.i(TAG, "Text: ["+bluetoothSwitch.isActivated()+"]");
+                Log.i(TAG, "Text: [" + bluetoothSwitch.getText().toString() + "]");
+                Log.i(TAG, "Text: [" + bluetoothSwitch.getTextOn().toString() + "]");
+                Log.i(TAG, "Text: [" + bluetoothSwitch.getTextOff().toString() + "]");
+                Log.i(TAG, "Text: [" + bluetoothSwitch.isChecked() + "]");
+                Log.i(TAG, "Text: [" + bluetoothSwitch.isActivated() + "]");
             }
         });
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    private void setViewComponents() {
+        Log.i(TAG, "Set view components -- start");
         bluetoothOnOff();
         launchScan();
-        String pulseResource = getResources().getString(R.string.dist_init_val);
-        Log.i(TAG, "Content Pulse resource before: ["+pulseResource+"]");
+        String pulseResource = getResources().getString(R.string.default_pulse_msg);
+        Log.i(TAG, "Content Pulse resource before: [" + pulseResource + "]");
         reformatTextSize(pulseResource);
+        Log.i(TAG, "Set view components -- end");
     }
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -143,76 +143,28 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
 
-            if(BluetoothDevice.ACTION_FOUND.equals(action)){
-                Log.i(TAG, "ACTION: ["+action+"]");
-                Log.i(TAG, "Discov status 1: ["+bluetoothAdapter.isDiscovering()+"]");
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                Log.i(TAG, "ACTION: [" + action + "]");
+                Log.i(TAG, "Discov status 1: [" + bluetoothAdapter.isDiscovering() + "]");
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 Log.i(TAG, "SIZE OF LIST: " + bluetoothDeviceList.size());
-                if(bluetoothDeviceList.size() < 1){
-                    Log.i(TAG, "-- scan mode 1 --"+ bluetoothAdapter.getScanMode()+ "  scan state"+ bluetoothAdapter.getState());
+                if (bluetoothDeviceList.size() < 1) {
+                    Log.i(TAG, "-- scan mode 1 --" + bluetoothAdapter.getScanMode() + "  scan state" + bluetoothAdapter.getState());
                     short rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
-                    double distance = BluetoothDistanceMeasurement.convertRSSI2MeterWithAccuracy(rssi);
-                    double distance2 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 0);
-                    double distance3 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 1);
-                    double distance4 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 2);
-                    double distance10 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 3);
-                    double distance15 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 4);
-                    double distance20 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 5);
-                    double distance25 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 6);
-                    double distance30 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 7);
-                    double distance50 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 8);
-                    if (device.getName() != null){
-                        Log.i(TAG, "<----- Start: Name: "+ device.getName()+" ---");
-                        Log.i(TAG, "count down before (1): ---- "+detectionCountDown+" ----");
-                        deviceNameList.add(device.getName()+"  --  "+distance +" meter");
-                        closestDevicesDistAccurate.add(distance);
-                        if (distance50 < 1.5){
-                            Log.i(TAG, "<----- insert value and notify: "+ distance50+" m---");
-                            insertDistance(distance50);
-                            vibrate();
-                            Log.i(TAG, "<----- Insert value leaved ---");
-                        }
-                        Log.i(TAG, "D: ["+distance+" m], signal ["+rssi+" dbm]");
-                        Log.i(TAG, "D2: ["+distance2+"], signal ["+rssi+" dbm]");
-                        Log.i(TAG, "D3: ["+distance3+"], signal ["+rssi+" dbm]");
-                        Log.i(TAG, "D4: ["+distance4+"], signal ["+rssi+" dbm]");
-                        Log.i(TAG, "D10: ["+distance10+"], signal ["+rssi+" dbm]");
-                        Log.i(TAG, "D15: ["+distance15+"], signal ["+rssi+" dbm]");
-                        Log.i(TAG, "D20: ["+distance20+"], signal ["+rssi+" dbm]");
-                        Log.i(TAG, "D25: ["+distance25+"], signal ["+rssi+" dbm]");
-                        Log.i(TAG, "D30: ["+distance30+"], signal ["+rssi+" dbm]");
-                        Log.i(TAG, "D50: ["+distance50+"], signal ["+rssi+" dbm]");
-                        detectionCountDown--;
-                        if(detectionCountDown == 0){
-                            Log.i(TAG, " re-init count down ---- "+detectionCountDown+" ----");
-                            detectionCountDown = 14;
-                            Log.i(TAG, "count down re-initialized---- "+detectionCountDown+" ----");
-                        }
-                        Log.i(TAG, "count down after (1): ---- "+detectionCountDown+" ----");
-                        Log.i(TAG, "Name: "+ device.getName()+" ---- END --->");
 
-                    }else {
-                        deviceNameList.add(device.getAddress()+"  --  "+distance +" meter");
-                        closestDevicesDistAccurate.add(distance);
+                    if (device.getName() != null) {
+                        Log.i(TAG, "<----- Start: Name: " + device.getName() + " ---");
+                        deviceNameList.add(device.getName());
+                        Log.i(TAG, "Name: " + device.getName() + " ---- END --->");
+
+                        Log.i(TAG, "Device: Name: [" + device.getName() + " - - " + device.getAddress() + "]");
+                        bluetoothDeviceList.add(device);
+                        deviceNameList.notifyDataSetChanged();
+                        estimateSignalStrength(rssi);
+                        numberOfDectectedDevices.setText(String.valueOf(deviceNameList.getCount()));
                     }
-//                    Log.i(TAG, "D: ["+distance+" m], signal ["+rssi+" dbm]");
-//                    Log.i(TAG, "D2: ["+distance2+"], signal ["+rssi+" dbm]");
-//                    Log.i(TAG, "D3: ["+distance3+"], signal ["+rssi+" dbm]");
-//                    Log.i(TAG, "D4: ["+distance4+"], signal ["+rssi+" dbm]");
-//                    Log.i(TAG, "D10: ["+distance10+"], signal ["+rssi+" dbm]");
-//                    Log.i(TAG, "D15: ["+distance15+"], signal ["+rssi+" dbm]");
-//                    Log.i(TAG, "D20: ["+distance20+"], signal ["+rssi+" dbm]");
-//                    Log.i(TAG, "D25: ["+distance25+"], signal ["+rssi+" dbm]");
-//                    Log.i(TAG, "D30: ["+distance30+"], signal ["+rssi+" dbm]");
-//                    Log.i(TAG, "D50: ["+distance50+"], signal ["+rssi+" dbm]");
 
-                    Log.i(TAG, "Device: Name: ["+device.getName()+" - - "+device.getAddress()+"]");
-                    bluetoothDeviceList.add(device);
-                    deviceNameList.notifyDataSetChanged();
-                    Log.i(TAG, "size of double list: ["+closestDevicesDistAccurate.size()+"]");
-                    sortDistance(closestDevicesDistAccurate);
-                    numberOfDectectedDevices.setText(String.valueOf(deviceNameList.getCount()));
-                }else{
+                } else {
                     boolean deviceIsInTheList = false;
                     for (BluetoothDevice bluetoothDevice : bluetoothDeviceList) {
                         if (device.getAddress().equals(bluetoothDevice.getAddress())) {
@@ -220,87 +172,27 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
-                    if(!deviceIsInTheList){
-                        Log.i(TAG, "------- Discov status 3: ["+bluetoothAdapter.isDiscovering()+"]");
+                    if (!deviceIsInTheList) {
+                        Log.i(TAG, "------- Discov status 3: [" + bluetoothAdapter.isDiscovering() + "]");
                         short rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
-                        double distance = BluetoothDistanceMeasurement.convertRSSI2MeterWithAccuracy(rssi);
-                        double distance2 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 0);
-                        double distance3 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 1);
-                        double distance4 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 2);
-                        double distance10 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 3);
-                        double distance15 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 4);
-                        double distance20 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 5);
-                        double distance25 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 6);
-                        double distance30 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 7);
-                        double distance50 = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 8);
 
-                        if (device.getName() != null){
-                            Log.i(TAG, "<----- Start: Name: "+ device.getName()+" ---");
-                            Log.i(TAG, "count down before (2): ---- "+detectionCountDown+" ----");
-                            deviceNameList.add(device.getName()+"  --  "+distance +" meter");
-                            closestDevicesDistAccurate.add(distance);
-                            Log.i(TAG, "D: ["+distance+" m], signal ["+rssi+" dbm]");
-                            Log.i(TAG, "D2: ["+distance2+"], signal ["+rssi+" dbm]");
-                            Log.i(TAG, "D3: ["+distance3+"], signal ["+rssi+" dbm]");
-                            Log.i(TAG, "D4: ["+distance4+"], signal ["+rssi+" dbm]");
-                            Log.i(TAG, "D10: ["+distance10+"], signal ["+rssi+" dbm]");
-                            Log.i(TAG, "D15: ["+distance15+"], signal ["+rssi+" dbm]");
-                            Log.i(TAG, "D20: ["+distance20+"], signal ["+rssi+" dbm]");
-                            Log.i(TAG, "D25: ["+distance25+"], signal ["+rssi+" dbm]");
-                            Log.i(TAG, "D30: ["+distance30+"], signal ["+rssi+" dbm]");
-                            Log.i(TAG, "D50: ["+distance50+"], signal ["+rssi+" dbm]");
+                        if (device.getName() != null) {
+                            Log.i(TAG, "<----- Start: Name: " + device.getName() + " ---");
+                            deviceNameList.add(device.getName());
 
-                            if (distance50 < 1.5){
-                                Log.i(TAG, "<----- insert value and notify: "+ distance50+" m---");
-                                insertDistance(distance50);
-                                vibrate();
-                                Log.i(TAG, "<----- Insert value leaved ---");
-                            }
-                            detectionCountDown--;
-                            if(detectionCountDown == 0){
-                                Log.i(TAG, " re-init count down ---- "+detectionCountDown+" ----");
-                                detectionCountDown = 14;
-                                Log.i(TAG, "count down re-initialized---- "+detectionCountDown+" ----");
-                            }
-                            Log.i(TAG, "count down after (2): ---- "+detectionCountDown+" ----");
-                            Log.i(TAG, "Name: "+ device.getName()+" ---- END --->");
-                        }else {
-                            deviceNameList.add(device.getAddress()+"  --  "+distance +" meter");
-                            closestDevicesDistAccurate.add(distance);
+                            bluetoothDeviceList.add(device);
+                            deviceNameList.notifyDataSetChanged();
+                            estimateSignalStrength(rssi);
+                            numberOfDectectedDevices.setText(String.valueOf(deviceNameList.getCount()));
+                            Log.i(TAG, "Name: " + device.getName() + " ---- END --->");
                         }
-//                        Log.i(TAG, "D: ["+distance+" m], signal ["+rssi+" dbm]");
-//                        Log.i(TAG, "D2: ["+distance2+"], signal ["+rssi+" dbm]");
-//                        Log.i(TAG, "D3: ["+distance3+"], signal ["+rssi+" dbm]");
-//                        Log.i(TAG, "D4: ["+distance4+"], signal ["+rssi+" dbm]");
-//                        Log.i(TAG, "D10: ["+distance10+"], signal ["+rssi+" dbm]");
-//                        Log.i(TAG, "D15: ["+distance15+"], signal ["+rssi+" dbm]");
-//                        Log.i(TAG, "D20: ["+distance20+"], signal ["+rssi+" dbm]");
-//                        Log.i(TAG, "D25: ["+distance25+"], signal ["+rssi+" dbm]");
-//                        Log.i(TAG, "D30: ["+distance30+"], signal ["+rssi+" dbm]");
-//                        Log.i(TAG, "D50: ["+distance50+"], signal ["+rssi+" dbm]");
-                        Log.i(TAG, "size of double list: ["+closestDevicesDistAccurate.size()+"]");
-
-                        sortDistance(closestDevicesDistAccurate);
-                        bluetoothDeviceList.add(device);
-                        deviceNameList.notifyDataSetChanged();
-                        numberOfDectectedDevices.setText(String.valueOf(deviceNameList.getCount()));
                     }
-//                    else {
-//                        Log.i(TAG, "------ Discov status 4: ["+bluetoothAdapter.isDiscovering()+"]");
-//                        Log.i(TAG, "ACTION enabled: ["+bluetoothAdapter.isEnabled()+"]");
-//                        Log.i(TAG, "ACTION: ["+action+"]");
-//                        //detectionCountDown--;
-//                        //Log.i(TAG, "Block here Device always in the list---- Count down [-- "+detectionCountDown+" --]");
-//                        if(detectionCountDown == 0){
-//                            Log.i(TAG, "Retry to set scan as finished");
-//                            Log.i(TAG, "size of double list: ["+closestDevicesDistAccurate.size()+"]");
-//                        }
-//                    }
+
 
                 }// Restart discovering after it is finished
-            }else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
-                Log.i(TAG, "--- -- Get count -- "+ deviceNameList.getCount());
-                Log.i(TAG, "ACTION: ["+action+"]");
+            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                Log.i(TAG, "--- -- Get count -- " + deviceNameList.getCount());
+                Log.i(TAG, "ACTION: [" + action + "]");
                 deviceNameList.clear();
                 bluetoothDeviceList.clear();
                 closestDevicesDistAccurate.clear();
@@ -308,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
                 deviceNameList.notifyDataSetChanged();
                 bluetoothAdapter.startDiscovery();
                 Log.i(TAG, "----- End ----: ");
-                if (!bluetoothAdapter.isDiscovering() && bluetoothAdapter.isEnabled()){
+                if (!bluetoothAdapter.isDiscovering() && bluetoothAdapter.isEnabled()) {
                     Log.i(TAG, "-- try to relaunch discovering");
 
                     IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -317,54 +209,35 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             }
-//            else {
-//                Log.i(TAG, "-- scan mode 3 --"+ bluetoothAdapter.getScanMode()+ "  scan state"+ bluetoothAdapter.getState());
-//                Log.i(TAG, "-- try to relaunch discovering: re-yo --");
-//                Log.i(TAG, "------ Discov status 4: ["+bluetoothAdapter.isDiscovering()+"]");
-//                Log.i(TAG, "ACTION enabled: ["+bluetoothAdapter.isEnabled()+"]");
-//                Log.i(TAG, "ACTION: ["+action+"]");
-//            }
         }
     };
 
-    private void sortDistance(List<Double> distances){
-        Log.i(TAG, "---- starting sort");
-
-        Collections.sort(distances);
-        String first = distances.get(0) +" "+"meter";
-        String second = 0 + " "+"meter";
-        if (distances.size()>1){
-            second = distances.get(1) +" "+"meter";
-        }
-        reformatTextSize(first);
-        nextClosestDeviceDistance.setText(second);
-        Log.i(TAG, "ending sort ----");
-    }
-    private void resetMemberVariables(){
+    private void resetMemberVariables() {
         closestDevicesDistAccurate.clear();
         closestDevicesDist.clear();
         bluetoothDeviceList.clear();
         deviceNameList.clear();
-        String second = 0 + " "+"meter";
+        String second = 0 + " " + "meter";
         nextClosestDeviceDistance.setText(second);
         numberOfDectectedDevices.setText(getResources().getText(R.string.init_value_devices_found));
-        String pulseResource = getResources().getString(R.string.dist_init_val);
-        Log.i(TAG, "Content Pulse resource re-init: ["+pulseResource+"]");
+        String pulseResource = getResources().getString(R.string.default_pulse_msg);
+        Log.i(TAG, "Content Pulse resource re-init: [" + pulseResource + "]");
         reformatTextSize(pulseResource);
     }
-    private void launchScan(){
+
+    private void launchScan() {
         Log.i(TAG, "Scanning...");
 
         scanSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    if(!bluetoothAdapter.isEnabled()) { //
+                if (isChecked) {
+                    if (!bluetoothAdapter.isEnabled()) { //
                         Toast.makeText(MainActivity.this, "Bluetooth is not enabled", Toast.LENGTH_SHORT).show();
                         Log.i(TAG, "BT is not enabled");// Make BT discoverable
                         scanSwitch.setText(R.string.scan_devices_default);
-                        Log.i(TAG,"bt on off: "+bluetoothSwitch.isActivated()+", checked: "+bluetoothSwitch.isChecked());
-                    }else {
+                        Log.i(TAG, "bt on off: " + bluetoothSwitch.isActivated() + ", checked: " + bluetoothSwitch.isChecked());
+                    } else {
                         scanSwitch.setText(R.string.scan_devices_default1);
                         if (bluetoothAdapter.isDiscovering()) {
                             //resetMemberVariables();
@@ -396,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                     }
-                }else {
+                } else {
                     Log.i(TAG, "Discovering stopped");
                     bluetoothAdapter.cancelDiscovery();
                     scanSwitch.setText(R.string.scan_devices_default);
@@ -406,42 +279,63 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         MainActivity.this.unregisterReceiver(broadcastReceiver);
     }
 
-    private void reformatTextSize(String textPulseStr){
-        Log.i(TAG, "-- Set String start --");
+    private void reformatTextSize(String textPulseStr) {
+        Log.i(TAG, "-- Set String [" + textPulseStr + "] start --");
         String[] splitedText = textPulseStr.split(" ");
+
         SpannableStringBuilder stringBuilder = new SpannableStringBuilder(textPulseStr);
 
-        RelativeSizeSpan largeText = new RelativeSizeSpan(3.0f);
-        RelativeSizeSpan smallText = new RelativeSizeSpan(.1f);
+        RelativeSizeSpan largeText = new RelativeSizeSpan(1.5f);
+        RelativeSizeSpan midlleText = new RelativeSizeSpan(1.0f);
+        RelativeSizeSpan smallText = new RelativeSizeSpan(.6f);
 
         stringBuilder.setSpan(largeText,
                 textPulseStr.indexOf(splitedText[0]),
-                textPulseStr.indexOf(splitedText[1]),
+                textPulseStr.indexOf(splitedText[2]),
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         stringBuilder.setSpan(smallText,
-                textPulseStr.indexOf(splitedText[1]),
-                textPulseStr.indexOf(splitedText[1]),
+                textPulseStr.indexOf(splitedText[2]),
+                textPulseStr.indexOf(splitedText[4]),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+
+        stringBuilder.setSpan(largeText,
+                textPulseStr.indexOf(splitedText[4]),
+                textPulseStr.indexOf(splitedText[4]),
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        stringBuilder.setSpan(midlleText,
+                textPulseStr.indexOf(splitedText[5]),
+                textPulseStr.indexOf(splitedText[5]),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        // replace space with backslash in the string builder
+        stringBuilder.replace(textPulseStr.indexOf(splitedText[1]) + (splitedText[1].length()),
+                textPulseStr.indexOf(splitedText[1]) + (splitedText[1].length()), "\n");
+
+        stringBuilder.replace(textPulseStr.indexOf(splitedText[3]) + (splitedText[3].length() + 1),
+                textPulseStr.indexOf(splitedText[3]) + (splitedText[3].length() + 1), "\n");
+
         closestDeviceDistance.setText(stringBuilder);
-        Log.i(TAG, "Str 1: "+splitedText[0]);
-        Log.i(TAG, "Str 2: "+splitedText[1]);
+
+        Log.i(TAG, "Str builder after: " + stringBuilder);
         Log.i(TAG, "Set String end ----");
     }
 
-    private void setAnimationPulse(){
+    private void setAnimationPulse() {
         closestDeviceDistance.setBackgroundResource(R.drawable.pulse_list);
         AnimationDrawable pulseAnim = (AnimationDrawable) closestDeviceDistance.getBackground();
         pulseAnim.start();
     }
 
-    private void setTransitionAnimation(){
-        if (Build.VERSION.SDK_INT > 20){
+    private void setTransitionAnimation() {
+        if (Build.VERSION.SDK_INT > 20) {
             Slide slide = new Slide();
             slide.setSlideEdge(Gravity.TOP);
             slide.setDuration(350);
@@ -451,27 +345,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void goToStatisticActivity(View view){
+    public void goToStatisticActivity(View view) {
         Intent intent = new Intent(this, StatisticsActivity.class);
 
-        if (Build.VERSION.SDK_INT > 20){
-            ActivityOptions activityOptions = ActivityOptions
+        if (Build.VERSION.SDK_INT > 20) {
+            ActivityOptions activityOptions;
+            activityOptions = ActivityOptions
                     .makeSceneTransitionAnimation(this);
             startActivity(intent, activityOptions.toBundle());
-        }else {
+        } else {
             startActivity(intent);
         }
     }
 
     // add new value to the DB
-    private void insertDistance(double distance){
+    private void insertDistance(double distance) {
 
         long datetime = System.currentTimeMillis();
         dbHelper.insertValue(distance, datetime);
         database.endTransaction();
         database.close();
         dbHelper.close();
-        Log.d(TAG, "Value: ( "+distance+" ) saved in the DB");
+        Log.d(TAG, "Value: ( " + distance + " ) saved in the DB");
 
         DistcovidModelObject warning = new DistcovidModelObject(distance, datetime);
         warning.setFormattedDate(sdf.format(new Date(datetime)));
@@ -480,10 +375,55 @@ public class MainActivity extends AppCompatActivity {
         //onUpdateGraph(warning);
     }
 
-    private void vibrate(){
-        if (Build.VERSION.SDK_INT >=26){
+    private void vibrate() {
+        if (Build.VERSION.SDK_INT >= 20) {
             vibrator.vibrate(VibrationEffect
-                    .createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+                    .createOneShot(550, VibrationEffect.DEFAULT_AMPLITUDE));
         }
+    }
+
+    private void estimateSignalStrength(short rssi) {
+        Log.i(TAG, "Estimation started ------->");
+        // use the range n = 10
+        // Low signal approx in distance meter
+        String estimation;
+
+        if (((rssi >= -62) && (rssi <= -48))) {
+            double distance = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 3);
+
+            closestDevicesDistAccurate.add(distance);
+            Collections.sort(closestDevicesDistAccurate);
+            estimation = "High signal approx in " + closestDevicesDistAccurate.get(0) + " meter";
+
+            String second = 0 + " " + "meter";
+            if (closestDevicesDistAccurate.size() > 1) {
+                second = closestDevicesDistAccurate.get(1) + " " + "meter";
+            }
+            reformatTextSize(estimation);
+            nextClosestDeviceDistance.setText(second);
+
+            Log.i(TAG, " size of list for next device: ---- " + closestDevicesDistAccurate.size() + " ----");
+            insertDistance(distance);
+            vibrate(); // vibrate and then update view
+        } else if (((rssi >= -82) && (rssi <= -68))) {
+            double distance = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 3);
+            closestDevicesDistAccurate.add(distance);
+            Collections.sort(closestDevicesDistAccurate);
+
+            estimation = "Low signal approx in " + closestDevicesDistAccurate.get(0) + " meter";
+            //updateViews(closestDevicesDistAccurate);
+            String second = 0 + " " + "meter";
+            if (closestDevicesDistAccurate.size() > 1) {
+                second = closestDevicesDistAccurate.get(1) + " " + "meter";
+            }
+            reformatTextSize(estimation);
+            nextClosestDeviceDistance.setText(second);
+            Log.i(TAG, "Estimation: " + estimation);
+        } else {
+            final double distance = BluetoothDistanceMeasurement.convertRSSI2Meter(rssi, 3);
+            Log.i(TAG, "Not to approximate: strength [" + rssi + " dbm] for distance [" + distance + " m]");
+        }
+
+        Log.i(TAG, "Estimation ended <-------");
     }
 }
