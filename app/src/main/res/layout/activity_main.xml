@@ -1,26 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout
+<androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/drawer_layout"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        tools:openDrawer="start">
+        tools:context=".MainActivity">
 
-    <include
-            layout="@layout/app_bar_main"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-    <com.google.android.material.navigation.NavigationView
-            android:id="@+id/nav_view"
+    <TextView
+            android:id="@+id/toptitle_tv_id"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:fitsSystemWindows="true"
-            app:headerLayout="@layout/nav_header_main"
-            app:menu="@menu/drawer_menu"/>
+            android:layout_height="wrap_content"
+            android:text="@string/main_view_title"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-</androidx.drawerlayout.widget.DrawerLayout>
+    <!-- Place a layout here -->
+    <RelativeLayout
+            android:id="@+id/detection_view_layout_id"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginTop="15dp"
+            app:layout_constraintTop_toBottomOf="@id/toptitle_tv_id"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_margin="15dp"
+            android:gravity="center"
+    >
+
+        <TextView
+                android:id="@+id/closest_dist_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/default_pulse_msg"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textColor="@color/text_white"
+                android:background="@drawable/pulse_anim"
+        />
+
+    </RelativeLayout>
+
+    <TextView
+            android:id="@+id/number_of_devices_found_int_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/detection_view_layout_id"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginEnd="25dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/init_value_devices_found"
+            android:textStyle="bold"
+            android:layout_marginBottom="@dimen/margin_top_bottom_dimens"
+    />
+    <TextView
+            android:id="@+id/number_of_devices_found_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/detection_view_layout_id"
+            app:layout_constraintRight_toLeftOf="@id/number_of_devices_found_int_id"
+            android:layout_marginTop="20dp"
+            android:text="@string/number_of_devices_found"
+            android:layout_marginEnd="8dp"
+            android:textStyle="bold"
+android:layout_marginBottom="@dimen/margin_top_bottom_dimens"
+    />
+
+    <TextView
+            android:id="@+id/next_closest_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/number_of_devices_found_id"
+            app:layout_constraintRight_toLeftOf="@id/next_closest_value_id"
+            android:layout_marginEnd="8dp"
+            android:text="@string/next_closest_device_str"
+            android:textStyle="bold"
+            android:layout_marginTop="@dimen/margin_side_dimens"
+    />
+    <TextView
+            android:id="@+id/next_closest_value_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/number_of_devices_found_int_id"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginEnd="25sp"
+            android:text="@string/dist_init_val"
+            android:textStyle="bold"
+            android:layout_marginTop="@dimen/margin_side_dimens"
+    />
+    <Switch
+            android:id="@+id/bluetooth_on_off_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/detection_view_layout_id"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginStart="@dimen/margin_side_dimens"
+            android:layout_marginBottom="@dimen/margin_between_dimens"
+            android:text="@string/bluetooth_default"
+            android:layout_marginTop="20dp"
+            android:textOn="@string/text_on"
+            android:textOff="@string/text_off"
+            tools:ignore="RtlSymmetry"/>
+
+    <Switch
+            android:id="@+id/scan_start_stop_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/bluetooth_on_off_id"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginStart="@dimen/margin_side_dimens"
+            android:layout_marginBottom="@dimen/margin_top_bottom_dimens"
+            android:text="@string/scan_devices_default"
+            android:layout_marginTop="@dimen/margin_top_bottom_dimens"
+            android:textOff="@string/text_off"
+            android:textOn="@string/text_on"
+            tools:ignore="RtlSymmetry"/>
+
+    <Button
+            android:id="@+id/stats_btn_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_margin="15dp"
+            android:text="@string/show_warning_statistics"
+            android:background="@drawable/button_style"
+            android:textColor="@color/text_white"
+            android:onClick="goToStatisticActivity"
+    />
+</androidx.constraintlayout.widget.ConstraintLayout>

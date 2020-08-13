@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="colorPrimary">#7136c9</color>
+    <color name="colorPrimaryDark">#6500bb</color>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="text_white">#FFFFFF</color>
+
+    <!-- Color for pulse effect -->
+    <color name="pulseCenter">#7136c9</color>
+    <color name="pulseextern1">#a66bff</color>
+    <color name="pulseextern2">#bd92fc</color>
+    <color name="pulseextern3">#dbc5fc</color>
+    <color name="pulseextern4">#ffecff</color>
+    <!--
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    -->
 </resources>

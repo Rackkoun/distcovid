@@ -28,25 +28,29 @@ android {
             testCoverageEnabled true
         }
     }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 }
 
 //---------------------- Jacoco
 
 // jacoco configurations
-ext{
+ext {
     coverageSourceDirs = 'app/src/test/java'
 }
 
-jacoco{
+jacoco {
     toolVersion "0.8.5"
     reportsDir = file("$buildDir/reports")
 }
-task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']){
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
     group = "Reporting"
     description = "Generate Jacoco reports for Debug and Build"
 
     // define type of reports to generate
-    reports{
+    reports {
         xml.enabled = true
         html.enabled = true
         csv.enabled = true
@@ -76,7 +80,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']){
     }
 
     def debugTree = fileTree(
-            dir:"${buildDir}/intermediates/classes/debug",
+            dir: "${buildDir}/intermediates/classes/debug",
             excludes: excludeFiles
     )
 
@@ -124,10 +128,17 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'androidx.navigation:navigation-fragment:2.2.2'
-    implementation 'androidx.navigation:navigation-ui:2.2.2'
+    implementation 'androidx.navigation:navigation-fragment:2.3.0'
+    implementation 'androidx.navigation:navigation-ui:2.3.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    // MPAndroidChart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+
+    // Android notification
+    implementation "com.android.support:support-compat:29.0.0"
+
 }
