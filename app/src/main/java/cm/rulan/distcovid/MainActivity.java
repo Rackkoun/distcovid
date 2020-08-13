@@ -23,7 +23,10 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.*;
+import android.widget.ArrayAdapter;
+import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import cm.rulan.distcovid.database.StatsDataDB;
@@ -136,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
                     short rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
 
                     if (device.getName() != null) {// the app will crash if the device name is null
+                        Log.i(TAG, "Device is not null");
                         deviceNameList.add(device.getName());
                         bluetoothDeviceList.add(device);
                         deviceNameList.notifyDataSetChanged();
@@ -155,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
                         short rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE); // get signal strength
 
                         if (device.getName() != null) {
+                            Log.i(TAG, "Device is not null [else]");
                             deviceNameList.add(device.getName());
 
                             bluetoothDeviceList.add(device);

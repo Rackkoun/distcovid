@@ -33,8 +33,6 @@ import java.util.List;
 
 public class StatisticsActivity extends AppCompatActivity {
 
-    private final String TAG = "Stats";
-
     private LineChart graph;
     private List<Entry> entries;
     private LineDataSet lineDataSet;
@@ -108,6 +106,7 @@ public class StatisticsActivity extends AppCompatActivity {
             }
         }
         else{
+            String TAG = "Stats";
             Log.i(TAG, "--- onDraw object is null STATS ----");
         }
             lineDataSet = new LineDataSet(entries, "Closest Distance (in meter)"); // Legend

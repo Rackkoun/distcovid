@@ -24,12 +24,10 @@ public class StatsDataDB extends SQLiteOpenHelper {
     private static final String _ID = "_id";
     private static final String COLUMN_DISTANCE = "distance"; // in meter
     private static final String COLUMN_DATETIME = "datetime";
-    //private static final String COLUMN_DURING = "during"; // in minutes
 
     // drop table
     private static final String DROP_WARNING_TABLE = "DROP TABLE IF EXISTS " + WARNING_TABLE;
 
-    private SQLiteDatabase db;
 
     public StatsDataDB(Context context){
 
@@ -74,7 +72,7 @@ public class StatsDataDB extends SQLiteOpenHelper {
 
             long id = db.insert(WARNING_TABLE, null, values);
             db.setTransactionSuccessful();
-            Log.i(TAG, "transaction successful! --");
+            Log.i(TAG, "transaction successful! -- id: " + id);
         }catch (Exception e){
             Log.i(TAG, "Error while inserting values");
         }

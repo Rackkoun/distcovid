@@ -19,23 +19,6 @@ public class BluetoothDistanceMeasurement {
 
     private static final int[] N = new int[]{2, 3, 4, 10, 15, 20, 25, 30, 50};
 
-    public static double convertRSSI2MeterWithAccuracy(short rssi){
-        double distance;
-        if (rssi == 0){
-            return -1.0;
-        }
-        double ratio = rssi * 1.0/txPower;
-
-        if (ratio < 1.0){
-            distance = Math.pow(ratio, 10);
-            distance = Math.round(distance * 100.0) / 100.0; // to get two decimal digits
-        }else {
-            distance = (0.89976)*Math.pow(ratio, 7.7095) + 0.111;
-            distance = Math.round(distance * 100.0) / 100.0;
-        }
-        return distance;
-    }
-
     public static double convertRSSI2Meter(short rssi, int rangeIdx){
         /*
         * rangeIdx between 0 and 2
