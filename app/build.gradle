@@ -101,6 +101,9 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
     }
 }
 
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
+}
 //--------------- Sonarqube
 sonarqube {
     properties {
