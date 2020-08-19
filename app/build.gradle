@@ -101,9 +101,6 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
     }
 }
 
-tasks.withType(Test) {
-    jacoco.includeNoLocationClasses = true
-}
 //--------------- Sonarqube
 sonarqube {
     properties {
@@ -116,9 +113,9 @@ sonarqube {
         property "sonar.exclusions", "**/R.class,**/R\$*.class,**/BuildConfig.*,**/Manifest*.*,**/*Test*.*,com/**/*.*,androidTest/**/*.*,**/data/model/*"
 
         property "sonar.java.coveragePlugin", "jacoco"
-        property "sonar.android.lint.report", "build/reports/tests/testDebugUnitTest"
-        property "sonar.junit.reportsPaths", "build/reports/tests/testDebugUnitTest/"
-        property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/test-results/testDebugUnitTest/"
+        property "sonar.android.lint.report", "build/jacoco/testDebugUnitTest.exec"
+        property "sonar.junit.reportsPaths", "build/test-results/testDebugUnitTest/TEST-cm.rulan.distcovid.ExampleUnitTest.xml"
+        property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/test-results/testDebugUnitTest/TEST-cm.rulan.distcovid.ExampleUnitTest.xml"
         property 'sonar.java.binaries', 'build'
         property 'sonar.java.test.binaries', 'build'
     }
