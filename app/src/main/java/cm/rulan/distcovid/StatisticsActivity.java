@@ -65,7 +65,6 @@ public class StatisticsActivity extends AppCompatActivity {
 
         dbHelper = new StatsDataDB(this);
         dbHelper.getReadableDatabase();
-        // database = dbHelper.getReadableDatabase();
         onCreateGraph();
     }
 

@@ -21,12 +21,6 @@ public class BluetoothDistanceMeasurement {
 
     private static final int[] constExponent = new int[]{2, 3, 4, 10, 15, 20, 25, 30, 50};
 
-    public BluetoothDistanceMeasurement(){
-        /* explicit declaration of constructor*/
-        String tag = "MeasurementClass";
-        Log.i(tag, "Constructor is called");
-    }
-
     public static double convertRSSI2Meter(short rssi, int rangeIdx){
         /*
         * rangeIdx between 0 and 2
