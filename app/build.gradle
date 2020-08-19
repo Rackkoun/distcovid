@@ -51,9 +51,10 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
 
     // define type of reports to generate
     reports {
-        html.enabled = false
         xml.enabled = true
         csv.enabled = false
+        html.destination file("${buildDir}/reports/coverage")
+        xml.destination file ("${buildDir}/reports/jacoco-report.xml")
     }
 
     def excludeFiles = [
@@ -116,7 +117,7 @@ sonarqube {
         property "sonar.jacoco.reportPath", "build/jacoco/testDebugUnitTest.exec"
         property "sonar.android.lint.report", "build/reports/tests/testDebugUnitTest"
         property "sonar.junit.reportsPath", "build/reports/tests/testDebugUnitTest/index.html"
-        property "sonar.coverage.jacoco.xmlReportPaths", "build/test-results/testDebugUnitTest/TEST-cm.rulan.distcovid.ExampleUnitTest.xml"
+        property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco-report.xml"
         property 'sonar.java.binaries', 'build'
         property 'sonar.java.test.binaries', 'build'
     }
