@@ -8,7 +8,7 @@ package cm.rulan.distcovid.measurements;
 
 public class BluetoothDistanceMeasurement {
     // RAW Coded
-    private static final short txPower = -60;
+    private static final short REFERENCE_SIGNAL = -60;
 
     /*Power range:
     * from [-26, -100]
@@ -19,11 +19,13 @@ public class BluetoothDistanceMeasurement {
 
     private static final int[] constExponent = new int[]{2, 3, 4, 10, 15, 20, 25, 30, 50};
 
+    public BluetoothDistanceMeasurement(){/* explicit declaration of constructor*/}
+
     public static double convertRSSI2Meter(short rssi, int rangeIdx){
         /*
         * rangeIdx between 0 and 2
         * */
-        double distance = Math.pow(10, ((txPower - (rssi)) / (10f * constExponent[rangeIdx])));
+        double distance = Math.pow(10, ((REFERENCE_SIGNAL - (rssi)) / (10f * constExponent[rangeIdx])));
         distance = Math.round(distance * 100.0) / 100.0;
         return distance;
     }

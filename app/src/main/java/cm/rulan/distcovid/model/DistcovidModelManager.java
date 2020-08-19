@@ -12,7 +12,7 @@ import java.util.*;
 * */
 public class DistcovidModelManager {
 
-    private final String TAG = "Manager";
+    private static final String TAG = "Manager";
 
     @SuppressLint("SimpleDateFormat")
     private final SimpleDateFormat sdfDays = new SimpleDateFormat("yyyy-MM-dd"); // format to plot values daily
@@ -20,7 +20,7 @@ public class DistcovidModelManager {
     private final SimpleDateFormat sdfTime = new SimpleDateFormat("hh:mm:ss");
     private Date date = new Date();
 
-    public DistcovidModelManager() {}
+    public DistcovidModelManager() {/*Explicit declaration of the constructor*/}
 
     //get object grouped by day
     public List<DistcovidModelObject> groupDailyDistance(List<DistcovidModelObject> warnings){

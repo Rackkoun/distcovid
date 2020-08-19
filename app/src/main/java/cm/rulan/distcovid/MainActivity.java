@@ -11,7 +11,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -93,7 +92,8 @@ public class MainActivity extends AppCompatActivity {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         dbHelper = new StatsDataDB(this); // initialize the DB-helper for database transaction
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        dbHelper.getWritableDatabase();
+        //SQLiteDatabase database = dbHelper.getWritableDatabase();
     }
 
     private void bluetoothOnOff() {
@@ -333,7 +333,7 @@ public class MainActivity extends AppCompatActivity {
         warning.setFormattedTime(sdfTime.format(new Date(datetime)));
     }
 
-    private void estimateSignalStrength(short rssi) {
+    public void estimateSignalStrength(short rssi) {
         // use the range n = 10
         // Low signal approx in distance meter
         String estimation;
@@ -343,11 +343,11 @@ public class MainActivity extends AppCompatActivity {
 
             closestDevicesList.add(distance);
             Collections.sort(closestDevicesList);
-            estimation = "High signal approx in " + closestDevicesList.get(0) + " meter";
+            estimation = "High signal approx in " + closestDevicesList.get(0) + METER;
 
-            String second = 0 + " " + "meter";
+            String second = 0 + METER;
             if (closestDevicesList.size() > 1) {
-                second = closestDevicesList.get(1) + " " + "meter";
+                second = closestDevicesList.get(1) + METER;
             }
             reformatTextSize(estimation);
             nextClosestDeviceDistance.setText(second);

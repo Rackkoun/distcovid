@@ -64,8 +64,8 @@ public class StatisticsActivity extends AppCompatActivity {
         timeTv = findViewById(R.id.first_time_id);
 
         dbHelper = new StatsDataDB(this);
-        database = dbHelper.getReadableDatabase();
-
+        dbHelper.getReadableDatabase();
+        // database = dbHelper.getReadableDatabase();
         onCreateGraph();
     }
 

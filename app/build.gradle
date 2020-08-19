@@ -114,11 +114,11 @@ sonarqube {
 
         property "sonar.java.coveragePlugin", "jacoco"
         property "sonar.jacoco.reportPath", "build/jacoco/testDebugUnitTest.exec"
-        property "sonar.android.lint.report", "build/outputs/lint-results"
+        property "sonar.android.lint.report", "build/reports/tests/testDebugUnitTest"
         property "sonar.junit.reportsPath", "build/reports/tests/testDebugUnitTest"
         property "sonar.coverage.jacoco.xmlReportPaths", "build/test-results/testDebugUnitTest/TEST-cm.rulan.distcovid.ExampleUnitTest.xml"
         property 'sonar.java.binaries', 'build'
-        property 'sonar.java.test.binaries', 'build'
+        property 'sonar.java.test.binaries', 'build/test-results/testDebugUnitTest/binary'
     }
 }
 dependencies {
