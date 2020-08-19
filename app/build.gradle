@@ -113,7 +113,7 @@ sonarqube {
         property "sonar.exclusions", "**/R.class,**/R\$*.class,**/BuildConfig.*,**/Manifest*.*,**/*Test*.*,com/**/*.*,androidTest/**/*.*,**/data/model/*"
 
         property "sonar.java.coveragePlugin", "jacoco"
-        property "sonar.jacoco.reportPath", "build/jacoco/testDebugUnitTest.exec"
+        property "sonar.jacoco.reportPath", "build/jacoco/jacocoTest.exec"
         property "sonar.android.lint.report", "build/outputs/lint-results"
         property "sonar.junit.reportsPath", "build/test-results/testDebugUnitTest/Test-com.rulan.distcovid.ExampleUnitTest.xml"
         property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
