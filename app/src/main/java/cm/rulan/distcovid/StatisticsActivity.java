@@ -43,7 +43,9 @@ public class StatisticsActivity extends AppCompatActivity {
     private SQLiteDatabase database;
     private final DistcovidModelManager manager = new DistcovidModelManager();
 
-    TextView value_tv, date_tv, time_tv;
+    TextView valueTv;
+    TextView dateTv;
+    TextView timeTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +59,9 @@ public class StatisticsActivity extends AppCompatActivity {
     private void initViews(){
         graph = findViewById(R.id.chart_id);
 
-        value_tv = findViewById(R.id.first_value_id);
-        date_tv = findViewById(R.id.first_date_id);
-        time_tv = findViewById(R.id.first_time_id);
+        valueTv = findViewById(R.id.first_value_id);
+        dateTv = findViewById(R.id.first_date_id);
+        timeTv = findViewById(R.id.first_time_id);
 
         dbHelper = new StatsDataDB(this);
         database = dbHelper.getReadableDatabase();
@@ -145,9 +147,9 @@ public class StatisticsActivity extends AppCompatActivity {
             double currentClosestDist = w.getDistance();
 
             String distance = currentClosestDist +" meter";
-            value_tv.setText(distance);
-            date_tv.setText(w.getFormattedDate());
-            time_tv.setText(w.getFormattedTime());
+            valueTv.setText(distance);
+            dateTv.setText(w.getFormattedDate());
+            timeTv.setText(w.getFormattedTime());
 
         }else{
             warningList = new ArrayList<>();
@@ -155,9 +157,9 @@ public class StatisticsActivity extends AppCompatActivity {
             final String date = getResources().getString(R.string.date_init_value);
             final String time = getResources().getString(R.string.time_init_value);
 
-            value_tv.setText(distance);
-            date_tv.setText(date);
-            time_tv.setText(time);
+            valueTv.setText(distance);
+            dateTv.setText(date);
+            timeTv.setText(time);
         }
         return warningList;
     }

@@ -15,11 +15,9 @@ public class DistcovidModelManager {
     private final String TAG = "Manager";
 
     @SuppressLint("SimpleDateFormat")
-    private final SimpleDateFormat sdf_months = new SimpleDateFormat("yyyy-MM"); // format to plot values monthly
+    private final SimpleDateFormat sdfDays = new SimpleDateFormat("yyyy-MM-dd"); // format to plot values daily
     @SuppressLint("SimpleDateFormat")
-    private final SimpleDateFormat sdf_days = new SimpleDateFormat("yyyy-MM-dd"); // format to plot values daily
-    @SuppressLint("SimpleDateFormat")
-    private final SimpleDateFormat sdf_time = new SimpleDateFormat("hh:mm:ss");
+    private final SimpleDateFormat sdfTime = new SimpleDateFormat("hh:mm:ss");
     private Date date = new Date();
 
     public DistcovidModelManager() {}
@@ -29,12 +27,12 @@ public class DistcovidModelManager {
         if(warnings.size() > 0){
             for (DistcovidModelObject warning : warnings) {
                 date.setTime(warning.getDatetime());
-                warning.setFormattedDate(sdf_days.format(date));
-                warning.setFormattedTime(sdf_time.format(date));
+                warning.setFormattedDate(sdfDays.format(date));
+                warning.setFormattedTime(sdfTime.format(date));
             }
             Collections.sort(warnings);
             for (DistcovidModelObject p: warnings) {
-                Log.i(TAG, "ID: " +p.get_id() +"   Dist:" + p.getDistance() + "Date: "+ p.getFormattedDate()+ "   Time: "+p.getFormattedTime());
+                Log.i(TAG, "ID: " +p.getiD() +"   Dist:" + p.getDistance() + "Date: "+ p.getFormattedDate()+ "   Time: "+p.getFormattedTime());
             }
             return warnings;
         }
@@ -47,8 +45,8 @@ public class DistcovidModelManager {
         if (list.size() > 0){
             Collections.sort(list, new ModelDistanceComparator());
             DistcovidModelObject war = list.get(0);
-            war.setFormattedTime(sdf_time.format(war.getDatetime()));
-            war.setFormattedDate(sdf_days.format(war.getDatetime()));
+            war.setFormattedTime(sdfTime.format(war.getDatetime()));
+            war.setFormattedDate(sdfDays.format(war.getDatetime()));
 
             return war;
         }

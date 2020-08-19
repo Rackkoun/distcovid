@@ -44,17 +44,19 @@ public class MainActivity extends AppCompatActivity {
 // source spannable Text: https://stackoverflow.com/questions/16335178/different-font-size-of-strings-in-the-same-textview/16335416
 
     private static final String TAG = "MAIN_TAG";
-
+    private static final String METER = " meter";
     @SuppressLint("SimpleDateFormat")
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     @SuppressLint("SimpleDateFormat")
-    private final SimpleDateFormat sdf_time = new SimpleDateFormat("hh:mm:ss");
+    private final SimpleDateFormat sdfTime = new SimpleDateFormat("hh:mm:ss");
 
     private static final int REQUEST_ENABLE_BT = 1;
 
-    private Switch bluetoothSwitch, scanSwitch;
+    private Switch bluetoothSwitch;
+    private  Switch scanSwitch;
     private TextView numberOfDectectedDevices;
-    private TextView closestDeviceDistance, nextClosestDeviceDistance;
+    private TextView closestDeviceDistance;
+    private TextView nextClosestDeviceDistance;
 
     private List<BluetoothDevice> bluetoothDeviceList;
     private ArrayAdapter<String> deviceNameList;
@@ -64,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothAdapter bluetoothAdapter = null;
 
     private StatsDataDB dbHelper;
-    private SQLiteDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         dbHelper = new StatsDataDB(this); // initialize the DB-helper for database transaction
-        database = dbHelper.getWritableDatabase();
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
     }
 
     private void bluetoothOnOff() {
@@ -135,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if (bluetoothDeviceList.size() < 1) {
+                if (bluetoothDeviceList.isEmpty()) {
                     short rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
 
                     if (device.getName() != null) {// the app will crash if the device name is null
@@ -191,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
         closestDevicesList.clear();
         bluetoothDeviceList.clear();
         deviceNameList.clear();
-        String second = 0 + " " + "meter";
+        String second = 0 + METER;
         nextClosestDeviceDistance.setText(second);
         numberOfDectectedDevices.setText(getResources().getText(R.string.init_value_devices_found));
         String pulseResource = getResources().getString(R.string.default_pulse_msg);
@@ -329,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
 
         DistcovidModelObject warning = new DistcovidModelObject(distance, datetime);
         warning.setFormattedDate(sdf.format(new Date(datetime)));
-        warning.setFormattedTime(sdf_time.format(new Date(datetime)));
+        warning.setFormattedTime(sdfTime.format(new Date(datetime)));
     }
 
     private void estimateSignalStrength(short rssi) {
@@ -361,10 +362,10 @@ public class MainActivity extends AppCompatActivity {
             Collections.sort(closestDevicesList);
 
             estimation = "Low signal approx in " + closestDevicesList.get(0) + " meter";
-            String second = 0 + " " + "meter";
+            String second = 0 + METER;
 
             if (closestDevicesList.size() > 1) {
-                second = closestDevicesList.get(1) + " " + "meter";
+                second = closestDevicesList.get(1) + METER;
             }
             reformatTextSize(estimation);
             nextClosestDeviceDistance.setText(second);

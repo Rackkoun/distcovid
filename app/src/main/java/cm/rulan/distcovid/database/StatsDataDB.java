@@ -21,7 +21,7 @@ public class StatsDataDB extends SQLiteOpenHelper {
     private static final String WARNING_TABLE = "warning";
 
     // Columns's name
-    private static final String _ID = "_id";
+    private static final String _ID = "iD";
     private static final String COLUMN_DISTANCE = "distance"; // in meter
     private static final String COLUMN_DATETIME = "datetime";
 
@@ -99,7 +99,7 @@ public class StatsDataDB extends SQLiteOpenHelper {
                     long datetime = cursor.getLong(2);
 
                     DistcovidModelObject modelObject = new DistcovidModelObject(distance, datetime);
-                    modelObject.set_id(id);
+                    modelObject.setiD(id);
                     Log.i(TAG, "Object got:\n"+modelObject.toString());
                     warnings.add(modelObject);
                 }while (cursor.moveToNext());

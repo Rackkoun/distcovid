@@ -1,7 +1,7 @@
 package cm.rulan.distcovid.model;
 
 public class DistcovidModelObject implements java.lang.Comparable<DistcovidModelObject>{
-    private long _id;
+    private long iD;
     private final double distance;
     private final long datetime;
 
@@ -12,15 +12,15 @@ public class DistcovidModelObject implements java.lang.Comparable<DistcovidModel
     public DistcovidModelObject(double distance, long datetime){
         this.distance = distance;
         this.datetime = datetime;
-        _id = -1;
+        iD = -1;
     }
 
-    public long get_id() {
-        return _id;
+    public long getiD() {
+        return iD;
     }
 
-    public void set_id(long _id) {
-        this._id = _id;
+    public void setiD(long iD) {
+        this.iD = iD;
     }
 
     public double getDistance() {
@@ -50,7 +50,7 @@ public class DistcovidModelObject implements java.lang.Comparable<DistcovidModel
     @Override
     public String toString() {
         return "DiscovidModelObject{" +
-                "_id=" + _id +
+                "_id=" + iD +
                 ", distance=" + distance +
                 ", datetime=" + datetime +
                 ", formattedDate='" + formattedDate + '\'' +

@@ -17,13 +17,13 @@ public class BluetoothDistanceMeasurement {
     * formal: Distance = 10^((txPower - rssi)/(10*Ni))
     * with i = 2, 3, 4*/
 
-    private static final int[] N = new int[]{2, 3, 4, 10, 15, 20, 25, 30, 50};
+    private static final int[] constExponent = new int[]{2, 3, 4, 10, 15, 20, 25, 30, 50};
 
     public static double convertRSSI2Meter(short rssi, int rangeIdx){
         /*
         * rangeIdx between 0 and 2
         * */
-        double distance = Math.pow(10, ((txPower - (rssi)) / (10f * N[rangeIdx])));
+        double distance = Math.pow(10, ((txPower - (rssi)) / (10f * constExponent[rangeIdx])));
         distance = Math.round(distance * 100.0) / 100.0;
         return distance;
     }
