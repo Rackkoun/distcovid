@@ -6,6 +6,8 @@ package cm.rulan.distcovid.measurements;
 // How to calculate distance from RSSI value of the BLE Beacon
 //  https://iotandelectronics.wordpress.com/2016/10/07/how-to-calculate-distance-from-the-rssi-value-of-the-ble-beacon/
 
+import android.util.Log;
+
 public class BluetoothDistanceMeasurement {
     // RAW Coded
     private static final short REFERENCE_SIGNAL = -60;
@@ -19,7 +21,11 @@ public class BluetoothDistanceMeasurement {
 
     private static final int[] constExponent = new int[]{2, 3, 4, 10, 15, 20, 25, 30, 50};
 
-    public BluetoothDistanceMeasurement(){/* explicit declaration of constructor*/}
+    public BluetoothDistanceMeasurement(){
+        /* explicit declaration of constructor*/
+        String tag = "MeasurementClass";
+        Log.i(tag, "Constructor is called");
+    }
 
     public static double convertRSSI2Meter(short rssi, int rangeIdx){
         /*

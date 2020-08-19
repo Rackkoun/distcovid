@@ -93,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
 
         dbHelper = new StatsDataDB(this); // initialize the DB-helper for database transaction
         dbHelper.getWritableDatabase();
-        //SQLiteDatabase database = dbHelper.getWritableDatabase();
     }
 
     private void bluetoothOnOff() {
@@ -361,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
             closestDevicesList.add(distance);
             Collections.sort(closestDevicesList);
 
-            estimation = "Low signal approx in " + closestDevicesList.get(0) + " meter";
+            estimation = "Low signal approx in " + closestDevicesList.get(0) + METER;
             String second = 0 + METER;
 
             if (closestDevicesList.size() > 1) {

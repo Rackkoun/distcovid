@@ -36,7 +36,9 @@ public class DistcovidModelManager {
             }
             return warnings;
         }
-        return null;
+        // warning is null, then return a new empty list
+        warnings = new ArrayList<>();
+        return warnings;
     }
 
     // get the (Object) minimal distance

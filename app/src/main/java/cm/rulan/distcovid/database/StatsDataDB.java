@@ -21,7 +21,7 @@ public class StatsDataDB extends SQLiteOpenHelper {
     private static final String WARNING_TABLE = "warning";
 
     // Columns's name
-    private static final String _ID = "iD";
+    private static final String ID = "iD";
     private static final String COLUMN_DISTANCE = "distance"; // in meter
     private static final String COLUMN_DATETIME = "datetime";
 
@@ -38,7 +38,7 @@ public class StatsDataDB extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         try {
             String sqlQuery = "CREATE TABLE "+ WARNING_TABLE +
-                    "("+ _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "("+ ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_DISTANCE + " REAL NOT NULL, " +
                    // COLUMN_DURING + " INTEGER, " +
                     COLUMN_DATETIME + " TEXT);";

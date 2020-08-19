@@ -100,16 +100,16 @@ public class StatisticsActivity extends AppCompatActivity {
         entries.add(new Entry(0.0f, 0.0f));
         xaxis.add("0");
 
-        // check if the list not null to avoid app crash
-        if(modelObjects != null && modelObjects.size() > 0) {
+        // check if the list not empty to avoid app crash
+        if(!modelObjects.isEmpty()) {
             for (int i = 0; i < modelObjects.size(); i++) {
                 entries.add(new Entry((float) (i + 1), Double.valueOf(modelObjects.get(i).getDistance()).floatValue()));
                 xaxis.add(modelObjects.get(i).getFormattedDate());
             }
         }
         else{
-            String TAG = "Stats";
-            Log.i(TAG, "--- onDraw object is null STATS ----");
+            String tag = "Stats";
+            Log.i(tag, "--- onDraw object is null STATS ----");
         }
             lineDataSet = new LineDataSet(entries, "Closest Distance (in meter)"); // Legend
             onConfigLineDataSet(lineDataSet);
